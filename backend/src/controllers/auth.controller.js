@@ -57,6 +57,7 @@ async function registerUserController(req, res) {
 
 /**
  *@name loginUserController
+ * @route POST /api/auth/login
  @description login  user, expects email and password in the request body
  @access public
  */
@@ -97,6 +98,7 @@ async function loginUserController(req, res) {
 
 /**
  *@name logoutUserController
+  * @route GET /api/auth/logout
  @description  clear token from user cookie and add the token in the blackList
  @access public
  */
@@ -117,7 +119,8 @@ async function logoutUserController(req, res) {
 }
 
 /**
- *@name logoutUserController
+ *@name getMeController
+  * @route GET /api/auth/get-me
  @description  get the current logged in user details
  @access public
  */
