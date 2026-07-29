@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Mail, Lock, User, Eye } from 'lucide-react';
 import AuthVisual from '../components/AuthVisual';
+import { useNavigate } from 'react-router';
+import { useAuth } from '../hooks/useAuth';
 
 const Register = () => {
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { loading, handleRegister } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await handleRegister({ username, email, password });
+    navigate('/');
   };
 
   return (
@@ -87,6 +98,7 @@ const Register = () => {
                     <User className="w-4 h-4" />
                   </div>
                   <input
+                    onChange={(e) => setUsername(e.target.value)}
                     type="text"
                     name="name"
                     id="name"
@@ -108,6 +120,7 @@ const Register = () => {
                     <Mail className="w-4 h-4" />
                   </div>
                   <input
+                    onChange={(e) => setEmail(e.target.value)}
                     type="email"
                     name="email"
                     id="email"
@@ -129,6 +142,7 @@ const Register = () => {
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
+                    onChange={(e) => setPassword(e.target.value)}
                     type="password"
                     name="password"
                     id="password"
