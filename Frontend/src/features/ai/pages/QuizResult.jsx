@@ -63,7 +63,7 @@ const QuizResult = () => {
         <h2 className="text-lg font-bold mb-2">Error Loading Results</h2>
         <p className="text-xs text-zinc-505 max-w-md mb-6">{error || 'Could not find quiz session details.'}</p>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 bg-zinc-50 text-zinc-950 font-bold px-4 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer text-xs"
         >
           <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
@@ -85,8 +85,8 @@ const QuizResult = () => {
         {/* Navigation & Header Actions */}
         <div className="flex items-center justify-between border-b border-zinc-800 pb-5">
           <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer"
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-855 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Dashboard</span>
@@ -239,7 +239,7 @@ const QuizResult = () => {
             <p className="text-[11px] text-zinc-500 mt-1 leading-normal">Start another interactive technical session or check your compatibility details dashboard.</p>
           </div>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="w-full sm:w-auto bg-zinc-50 hover:bg-white text-zinc-950 font-bold text-xs py-2 px-4 rounded-lg transition-colors cursor-pointer shrink-0"
           >
             Practice new quiz

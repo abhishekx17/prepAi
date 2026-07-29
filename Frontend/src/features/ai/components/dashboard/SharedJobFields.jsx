@@ -32,10 +32,10 @@ const SharedJobFields = ({
         placeholder="React, Node, cloud, leadership"
       />
     </div>
-    <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-zinc-950/35 p-4">
+    <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-zinc-950/35 p-4">
       <div className="flex items-center justify-between mb-1.5 select-none">
         <FieldLabel htmlFor="jobDescription">Job description</FieldLabel>
-        <span className="text-[9px] font-bold font-mono text-zinc-600">
+        <span className="text-[9px] font-bold font-mono text-slate-400 dark:text-zinc-600">
           {jobDescription.length} / 5000
         </span>
       </div>
@@ -49,7 +49,7 @@ const SharedJobFields = ({
         required
       />
     </div>
-    <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-zinc-950/35 p-4">{renderResumeUpload()}</div>
+    <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-zinc-950/35 p-4">{renderResumeUpload()}</div>
   </div>
 );
 

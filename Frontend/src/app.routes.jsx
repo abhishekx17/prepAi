@@ -8,6 +8,7 @@ import InterviewArena from './features/ai/pages/InterviewArena';
 import InterviewResult from './features/ai/pages/InterviewResult';
 import QuizArena from './features/ai/pages/QuizArena';
 import QuizResult from './features/ai/pages/QuizResult';
+import LandingPage from './pages/LandingPage';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
+    element: <LandingPage />,
+  },
+  {
+    path: '/dashboard',
     element: (
       <Protected>
         <Dashboard />

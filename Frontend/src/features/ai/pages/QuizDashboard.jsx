@@ -258,7 +258,7 @@ const QuizDashboard = () => {
         <header className="px-6 py-4 bg-[#0E1017] border-b border-[#161926] flex items-center justify-between sticky top-0 z-15 shrink-0">
           <div className="flex items-center bg-[#12151E] border border-slate-850 p-1 rounded-xl text-xs font-semibold select-none">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/dashboard')}
               className="py-2 px-5 text-center rounded-lg transition-colors text-slate-400 hover:text-slate-200 cursor-pointer"
             >
               Interview Hub

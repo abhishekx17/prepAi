@@ -92,7 +92,7 @@ const ReportDetail = () => {
     try {
       setLoading(true);
       await deleteReport(id);
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       setError('Failed to delete report.');
       setLoading(false);
@@ -129,7 +129,7 @@ const ReportDetail = () => {
         <h2 className="text-lg font-bold mb-2">Error Loading Report</h2>
         <p className="text-xs text-zinc-500 max-w-md mb-6">{error || 'The report does not exist or has been deleted.'}</p>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 bg-zinc-50 text-zinc-950 font-bold px-4 py-2 rounded-lg hover:bg-white transition-colors cursor-pointer text-xs"
         >
           <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
@@ -148,8 +148,8 @@ const ReportDetail = () => {
         {/* Navigation & Actions Header */}
         <div className="flex items-center justify-between border-b border-zinc-800 pb-5">
           <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer"
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-855 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Dashboard</span>

@@ -152,7 +152,7 @@ const InterviewArena = () => {
         <h2 className="text-lg font-bold mb-2">Failed to Enter Arena</h2>
         <p className="text-sm text-zinc-500 max-w-md mb-6">{error}</p>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 hover:bg-zinc-850 hover:text-zinc-50 transition-colors cursor-pointer text-xs font-semibold"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -172,7 +172,7 @@ const InterviewArena = () => {
           <button
             onClick={() => {
               if (window.confirm('Are you sure you want to exit the interview session? Your progress will be saved.')) {
-                navigate('/');
+                navigate('/dashboard');
               }
             }}
             className="text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"

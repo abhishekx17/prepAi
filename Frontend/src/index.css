@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-surface: #111113;
   --color-surface-raised: #18181b;
@@ -36,11 +38,14 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background:
-    radial-gradient(circle at 18% 12%, rgba(34, 211, 238, 0.12), transparent 28rem),
-    radial-gradient(circle at 82% 4%, rgba(244, 114, 182, 0.09), transparent 24rem),
-    linear-gradient(180deg, #07070a 0%, #0a0a0f 42%, #050507 100%);
-  background-attachment: fixed;
+  background-color: #f8fafc; /* bg-slate-50 */
+  color: #0f172a;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+:where(.dark) body {
+  background-color: #09090b; /* bg-zinc-950 */
+  color: #fafafa;
 }
 
 button,

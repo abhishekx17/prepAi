@@ -73,7 +73,7 @@ const AppSidebar = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className="px-3 text-[10px] font-bold uppercase tracking-wider text-zinc-550 select-none mb-2"
+          className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 select-none mb-2"
         >
           {title}
         </motion.p>
@@ -88,14 +88,14 @@ const AppSidebar = ({
             onClick={() => onSelectFeature(item.id)}
             title={item.label}
             className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left cursor-pointer transition-colors ${
-              active ? 'text-zinc-50 font-bold' : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
+              active ? 'text-sky-600 dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-white/[0.04] hover:text-slate-800 dark:hover:text-zinc-200'
             } ${isCollapsed ? 'lg:justify-center lg:px-0 lg:h-10' : 'h-11'}`}
           >
             {/* Left Border Active Indicator */}
             {active && (
               <motion.div
                 layoutId="sidebar-active-indicator"
-                className="absolute left-0 top-2.5 bottom-2.5 w-[2.5px] bg-cyan-200 rounded-r-md z-15"
+                className="absolute left-0 top-2.5 bottom-2.5 w-[2.5px] bg-sky-600 dark:bg-sky-400 rounded-r-md z-15"
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}
@@ -104,7 +104,7 @@ const AppSidebar = ({
             {active && (
               <motion.div
                 layoutId="sidebar-active-bg"
-                className="absolute inset-0 z-0 rounded-xl border border-cyan-200/16 bg-cyan-200/[0.08]"
+                className="absolute inset-0 z-0 rounded-xl border border-sky-100 dark:border-sky-900/30 bg-sky-50 dark:bg-sky-950/20"
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}
@@ -121,7 +121,7 @@ const AppSidebar = ({
                 className="relative z-10 min-w-0 flex-1"
               >
                 <p className="text-[12px] font-bold tracking-tight">{item.label}</p>
-                <p className="text-[10px] text-zinc-500 font-medium group-hover:text-zinc-400 transition-colors">
+                <p className="text-[10px] text-slate-400 dark:text-zinc-550 font-medium group-hover:text-slate-600 dark:group-hover:text-zinc-400 transition-colors">
                   {item.description}
                 </p>
               </motion.div>
@@ -141,7 +141,7 @@ const AppSidebar = ({
             animate={{ opacity: 0.4 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-35 bg-black lg:hidden"
+            className="fixed inset-0 z-35 bg-black lg:hidden"
             onClick={onCloseMobile}
           />
         )}
@@ -153,7 +153,7 @@ const AppSidebar = ({
           x: isMobileOpen ? 0 : undefined,
         }}
         transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-        className={`fixed inset-y-0 left-0 z-40 flex h-screen flex-col border-r border-white/10 bg-zinc-950/86 shadow-[20px_0_80px_rgba(0,0,0,0.22)] backdrop-blur-xl lg:sticky lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex h-screen flex-col border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
@@ -161,12 +161,12 @@ const AppSidebar = ({
         <div 
           onClick={onToggleCollapse}
           title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          className="flex h-16 items-center gap-3 border-b border-white/10 px-4 shrink-0 overflow-hidden select-none cursor-pointer hover:bg-white/[0.04] transition-colors group/brand"
+          className="flex h-16 items-center gap-3 border-b border-slate-200 dark:border-zinc-800 px-4 shrink-0 overflow-hidden select-none cursor-pointer hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors group/brand"
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-cyan-200/20 bg-cyan-200/10 text-cyan-100 group-hover/brand:border-cyan-100/40 transition-colors relative">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/50 bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400 group-hover/brand:border-sky-500 transition-colors relative">
             <Sparkles className="h-4.5 w-4.5" strokeWidth={1.5} />
             {isCollapsed && (
-              <ChevronRight className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 bg-zinc-950 border border-white/10 rounded-full text-zinc-500 opacity-0 group-hover/brand:opacity-100 transition-opacity" />
+              <ChevronRight className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-full text-slate-400 dark:text-zinc-500 opacity-0 group-hover/brand:opacity-100 transition-opacity" />
             )}
           </div>
           {!isCollapsed && (
@@ -177,28 +177,28 @@ const AppSidebar = ({
               className="min-w-0 flex-1 flex items-center justify-between"
             >
               <div>
-                <p className="text-sm font-bold tracking-tight text-zinc-50 leading-none">PrepAI</p>
-                <p className="text-[10px] font-medium text-zinc-500 mt-1 select-none">Interview workspace</p>
+                <p className="text-sm font-bold tracking-tight text-slate-800 dark:text-zinc-50 leading-none">PrepAI</p>
+                <p className="text-[10px] font-medium text-slate-400 dark:text-zinc-500 mt-1 select-none">Interview workspace</p>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[9px] font-bold text-cyan-200/70 select-none">
+                <span className="rounded-full border border-sky-200/50 dark:border-sky-800/50 bg-sky-50 dark:bg-sky-950/30 px-2 py-0.5 text-[9px] font-bold text-sky-600 dark:text-sky-400 select-none">
                   Beta
                 </span>
-                <ChevronLeft className="h-4 w-4 text-zinc-500 group-hover/brand:text-zinc-350 transition-colors" />
+                <ChevronLeft className="h-4 w-4 text-slate-400 dark:text-zinc-500 group-hover/brand:text-slate-600 dark:group-hover:text-zinc-300 transition-colors" />
               </div>
             </motion.div>
           )}
         </div>
 
         {/* New session */}
-        <div className="border-b border-white/10 p-3 shrink-0 overflow-hidden">
+        <div className="border-b border-slate-200 dark:border-zinc-800 p-3 shrink-0 overflow-hidden">
           <Button
             variant="secondary"
             size="sm"
             onClick={onNewSession}
             className={`w-full h-9.5 ${isCollapsed ? 'lg:px-0 lg:justify-center' : 'justify-start'}`}
           >
-            <Plus className="h-4 w-4 shrink-0 text-zinc-400" strokeWidth={1.5} />
+            <Plus className="h-4 w-4 shrink-0 text-slate-400 dark:text-zinc-400" strokeWidth={1.5} />
             {!isCollapsed && (
               <motion.span
                 initial={{ opacity: 0 }}
@@ -219,9 +219,9 @@ const AppSidebar = ({
         </nav>
 
         {/* User Profile Footer */}
-        <div className="border-t border-white/10 p-3 shrink-0 overflow-hidden">
-          <div className={`flex items-center gap-2.5 rounded-2xl bg-white/[0.045] p-2.5 border border-white/10 ${isCollapsed ? 'lg:justify-center lg:p-1.5' : ''}`}>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-cyan-200/20 bg-cyan-200/10 text-xs font-bold text-cyan-100 uppercase select-none">
+        <div className="border-t border-slate-200 dark:border-zinc-800 p-3 shrink-0 overflow-hidden">
+          <div className={`flex items-center gap-2.5 rounded-2xl bg-slate-50 dark:bg-white/[0.045] p-2.5 border border-slate-200 dark:border-zinc-800/50 ${isCollapsed ? 'lg:justify-center lg:p-1.5' : ''}`}>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800/50 bg-sky-50 dark:bg-sky-950/30 text-xs font-bold text-sky-600 dark:text-sky-400 uppercase select-none">
               {user?.username?.charAt(0) || 'U'}
             </div>
             {!isCollapsed && (
@@ -231,15 +231,15 @@ const AppSidebar = ({
                 transition={{ duration: 0.15 }}
                 className="min-w-0 flex-1"
               >
-                <p className="truncate text-xs font-bold text-zinc-200">{user?.username || 'User'}</p>
-                <p className="truncate text-[9px] font-medium text-zinc-550 mt-0.5">{user?.email}</p>
+                <p className="truncate text-xs font-bold text-slate-800 dark:text-zinc-200">{user?.username || 'User'}</p>
+                <p className="truncate text-[9px] font-medium text-slate-400 dark:text-zinc-500 mt-0.5">{user?.email}</p>
               </motion.div>
             )}
             {!isCollapsed && (
               <button
                 type="button"
                 onClick={onLogout}
-                className="rounded-lg p-1 text-zinc-550 hover:bg-white/[0.06] hover:text-zinc-300 transition-colors cursor-pointer"
+                className="rounded-lg p-1 text-slate-400 dark:text-zinc-500 hover:bg-slate-100 dark:hover:bg-white/[0.06] hover:text-slate-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
                 title="Sign out"
               >
                 <LogOut className="h-4 w-4" strokeWidth={1.5} />
@@ -250,7 +250,7 @@ const AppSidebar = ({
             <button
               type="button"
               onClick={onLogout}
-              className="mt-2 hidden w-full items-center justify-center rounded-lg py-2.5 text-zinc-550 hover:bg-white/[0.06] hover:text-zinc-300 lg:flex cursor-pointer"
+              className="mt-2 hidden w-full items-center justify-center rounded-lg py-2.5 text-slate-400 dark:text-zinc-500 hover:bg-slate-100 dark:hover:bg-white/[0.06] hover:text-slate-600 dark:hover:text-zinc-300 lg:flex cursor-pointer"
               title="Sign out"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />

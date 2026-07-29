@@ -48,7 +48,7 @@ const QuizView = ({
         />
       </div>
 
-      <div className="grid gap-4 rounded-2xl border border-white/10 bg-zinc-950/35 p-4 sm:grid-cols-2">
+      <div className="grid gap-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-zinc-950/35 p-4 sm:grid-cols-2">
         <div>
           <FieldLabel htmlFor="quizDifficulty">Difficulty</FieldLabel>
           <Select
@@ -75,12 +75,12 @@ const QuizView = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
-        <p className="text-xs text-zinc-500 font-medium max-w-md">
+      <div className="flex flex-col gap-4 border-t border-slate-200 dark:border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
+        <p className="text-xs text-slate-500 dark:text-zinc-500 font-medium max-w-md">
           Assess your level. Each question comes with structured grading and a detailed explanation of correct answers.
         </p>
         <Button type="submit" size="lg" className="w-full sm:w-auto">
-          <Play className="h-4 w-4 text-zinc-950 shrink-0" strokeWidth={1.5} />
+          <Play className="h-4 w-4 shrink-0" strokeWidth={1.5} />
           Launch quiz
         </Button>
       </div>

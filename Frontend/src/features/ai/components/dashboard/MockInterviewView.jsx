@@ -53,7 +53,7 @@ const MockInterviewView = ({
         renderResumeUpload={renderResumeUpload}
       />
 
-      <div className="grid gap-4 rounded-2xl border border-white/10 bg-zinc-950/35 p-4 sm:grid-cols-2">
+      <div className="grid gap-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-zinc-950/35 p-4 sm:grid-cols-2">
         <div>
           <FieldLabel htmlFor="difficulty">Difficulty</FieldLabel>
           <Select id="difficulty" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="h-9">
@@ -72,8 +72,8 @@ const MockInterviewView = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
-        <p className="text-[11px] text-zinc-500 font-medium max-w-md">
+      <div className="flex flex-col gap-3 border-t border-slate-200 dark:border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
+        <p className="text-[11px] text-slate-500 dark:text-zinc-500 font-medium max-w-md">
           Creates a live session responding to your inputs and coding templates in real-time.
         </p>
         <Button type="submit" size="md" className="w-full sm:w-auto h-9">

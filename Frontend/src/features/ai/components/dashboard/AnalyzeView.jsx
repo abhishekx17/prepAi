@@ -48,8 +48,8 @@ const AnalyzeView = ({
         renderResumeUpload={renderResumeUpload}
       />
 
-      <div className="flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
-        <p className="text-[11px] text-zinc-500 font-medium max-w-md">
+      <div className="flex flex-col gap-3 border-t border-slate-200 dark:border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
+        <p className="text-[11px] text-slate-500 dark:text-zinc-500 font-medium max-w-md">
           Generates compatibility scores, outlines skill gaps, and plans question roadmaps.
         </p>
         <Button type="submit" size="md" className="w-full sm:w-auto h-9">

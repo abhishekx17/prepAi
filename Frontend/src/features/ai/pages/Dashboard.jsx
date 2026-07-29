@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Menu } from 'lucide-react';
+import { Menu, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { generateReport, getReports } from '../services/report.api';
@@ -40,6 +40,26 @@ const Dashboard = () => {
   const { user, handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved;
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(
     () => localStorage.getItem('sidebar-collapsed') === 'true'
@@ -85,7 +105,7 @@ const Dashboard = () => {
     else if (tab === 'interview' || tab === 'mock') setActiveFeature('mock');
     else if (tab === 'recent') setActiveFeature('recent');
     else if (tab === 'analyze' || tab === 'report') setActiveFeature('analyze');
-    else if (!tab && location.pathname === '/') setActiveFeature('overview');
+    else if (!tab && location.pathname === '/dashboard') setActiveFeature('overview');
   }, [location.search, location.pathname]);
 
   useEffect(() => {
@@ -136,6 +156,22 @@ const Dashboard = () => {
     return Math.round(reports.reduce((s, r) => s + (r.matchScore || 0), 0) / reports.length);
   }, [reports]);
 
+  const selectFeature = (featureId) => {
+    setActiveFeature(featureId);
+    setError('');
+    setSuccessMsg('');
+    setIsMobileMenuOpen(false);
+
+    const routes = {
+      overview: '/dashboard',
+      analyze: '/dashboard?tab=analyze',
+      mock: '/dashboard?tab=interview',
+      quiz: '/quiz',
+      recent: '/dashboard?tab=recent',
+    };
+    navigate(routes[featureId] || '/dashboard');
+  };
+
   const clearForm = () => {
     setGenerating(false);
     setQuizGenerating(false);
@@ -148,22 +184,7 @@ const Dashboard = () => {
     setFileSize('');
     setError('');
     setSuccessMsg('');
-  };
-
-  const selectFeature = (featureId) => {
-    setActiveFeature(featureId);
-    setError('');
-    setSuccessMsg('');
-    setIsMobileMenuOpen(false);
-
-    const routes = {
-      overview: '/',
-      analyze: '/?tab=analyze',
-      mock: '/?tab=interview',
-      quiz: '/quiz',
-      recent: '/?tab=recent',
-    };
-    navigate(routes[featureId] || '/');
+    selectFeature('analyze');
   };
 
   const performUpload = async (file) => {
@@ -414,7 +435,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen overflow-hidden bg-transparent text-zinc-100">
+    <div className="flex min-h-screen overflow-hidden bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 transition-colors duration-300">
       <AppSidebar
         user={user}
         activeFeature={activeFeature}
@@ -426,28 +447,49 @@ const Dashboard = () => {
         onNewSession={clearForm}
         onLogout={handleLogout}
       />
+      {/* Spacer to push right column content past the fixed sidebar on desktop */}
+      <div 
+        className={`hidden lg:block shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'w-[68px]' : 'w-[230px]'}`}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-16 items-center border-b border-white/10 bg-zinc-950/72 px-4 backdrop-blur-xl sm:px-6 select-none">
+        <header className="sticky top-0 z-20 flex h-16 items-center border-b border-slate-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 px-4 backdrop-blur-md sm:px-6 select-none transition-colors">
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(true)}
-            className="mr-3 rounded-xl p-2 text-zinc-500 hover:bg-white/[0.06] hover:text-zinc-200 lg:hidden cursor-pointer"
+            className="mr-3 rounded-xl p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/[0.06] hover:text-slate-700 dark:hover:text-zinc-200 lg:hidden cursor-pointer"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" strokeWidth={1.5} />
           </button>
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-200/70">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
               {activeFeature === 'overview' ? 'Dashboard' : 'Workspace'}
             </p>
-            <h1 className="mt-0.5 truncate text-base font-bold tracking-tight text-zinc-50">
+            <h1 className="mt-0.5 truncate text-base font-bold tracking-tight text-slate-900 dark:text-zinc-50">
               {activeNav?.label || 'Overview'}
             </h1>
           </div>
-          <div className="ml-auto hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] font-semibold text-zinc-400 sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.8)]" />
-            Ready
+
+          <div className="ml-auto flex items-center gap-3.5">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors duration-200 cursor-pointer"
+              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            >
+              {theme === 'light' ? (
+                <Moon className="h-4.5 w-4.5" />
+              ) : (
+                <Sun className="h-4.5 w-4.5" />
+              )}
+            </button>
+
+            {/* Status indicator */}
+            <div className="hidden items-center gap-2 rounded-full border border-slate-200 dark:border-zinc-800 bg-slate-100/50 dark:bg-white/[0.04] px-3 py-1.5 text-[11px] font-semibold text-slate-600 dark:text-zinc-400 sm:flex transition-colors">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Ready
+            </div>
           </div>
         </header>
 
