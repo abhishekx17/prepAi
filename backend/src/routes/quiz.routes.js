@@ -1,13 +1,14 @@
 const { Router } = require('express');
 const quizRouter = Router();
 const quizController = require('../controllers/quiz.controller');
+const { checkUsageLimit, checkGeminiRateLimit } = require('../middlewares/limit.middleware');
 
 /**
  * @route POST /api/quizzes/start
  * @description Start a new multiple choice quiz session
  * @access Private
  */
-quizRouter.post('/start', quizController.startQuizController);
+quizRouter.post('/start', checkUsageLimit('quiz'), checkGeminiRateLimit, quizController.startQuizController);
 
 /**
  * @route GET /api/quizzes/history

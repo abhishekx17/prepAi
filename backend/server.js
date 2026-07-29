@@ -4,6 +4,13 @@ const connectToDb = require('./src/config/database');
 
 connectToDb();
 
-app.listen(3000, () => {
-  console.log('server is running on port 3000');
-});
+// Export app for Vercel serverless environment compatibility
+module.exports = app;
+
+// Only start the listening server if not running in a Vercel serverless context
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}

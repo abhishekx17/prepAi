@@ -45,7 +45,10 @@ resumeRouter.post('/upload', upload.single('resume'), async (req, res) => {
     }
 
     // Clean up basic extra spacing
-    extractedText = extractedText.replace(/\r\n/g, '\n').replace(/\n\s*\n/g, '\n\n').trim();
+    extractedText = extractedText
+      .replace(/\r\n/g, '\n')
+      .replace(/\n\s*\n/g, '\n\n')
+      .trim();
 
     if (!extractedText) {
       return res.status(400).json({

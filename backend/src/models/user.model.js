@@ -17,6 +17,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  tier: {
+    type: String,
+    enum: ['Free', 'Pro', 'Enterprise'],
+    default: 'Free',
+  },
+
+  usage: {
+    resumesAnalyzed: { type: Number, default: 0 },
+    interviewsStarted: { type: Number, default: 0 },
+    quizzesTaken: { type: Number, default: 0 },
+  },
+
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const userModel = mongoose.model('users', userSchema);

@@ -1,5 +1,6 @@
 const quizSessionModel = require('../models/quizSession.model');
 const quizService = require('../services/quiz.service');
+const { incrementUsage } = require('../middlewares/limit.middleware');
 
 /**
  * @name startQuizController
@@ -44,6 +45,9 @@ async function startQuizController(req, res) {
       score: 0,
       status: 'active',
     });
+
+    // Increment user usage metrics
+    await incrementUsage(req.userDoc, 'quiz');
 
     res.status(201).json({
       message: 'Quiz session started successfully',

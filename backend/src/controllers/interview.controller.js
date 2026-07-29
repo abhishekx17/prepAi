@@ -1,5 +1,6 @@
 const interviewSessionModel = require('../models/interviewSession.model');
 const interviewService = require('../services/interview.service');
+const { incrementUsage } = require('../middlewares/limit.middleware');
 
 /**
  * @name startInterviewController
@@ -53,6 +54,9 @@ async function startInterviewController(req, res) {
       currentQuestionIndex: 0,
       status: 'active',
     });
+
+    // Increment user usage metrics
+    await incrementUsage(req.userDoc, 'interview');
 
     res.status(201).json({
       message: 'Interview session started successfully',

@@ -1,13 +1,14 @@
 const { Router } = require('express');
 const interviewRouter = Router();
 const interviewController = require('../controllers/interview.controller');
+const { checkUsageLimit, checkGeminiRateLimit } = require('../middlewares/limit.middleware');
 
 /**
  * @route POST /api/interviews/start
  * @description Start a new mock interview session
  * @access Private
  */
-interviewRouter.post('/start', interviewController.startInterviewController);
+interviewRouter.post('/start', checkUsageLimit('interview'), checkGeminiRateLimit, interviewController.startInterviewController);
 
 /**
  * @route GET /api/interviews/history

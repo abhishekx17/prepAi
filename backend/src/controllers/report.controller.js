@@ -1,5 +1,6 @@
 const interviewReportModel = require('../models/interviewReport.model');
 const generateInterviewReport = require('../services/ai.service');
+const { incrementUsage } = require('../middlewares/limit.middleware');
 
 /**
  * @name generateReportController
@@ -43,6 +44,9 @@ async function generateReportController(req, res) {
       skillGaps: reportData.skillGaps || [],
       preparationPlan: reportData.preparationPlan || [],
     });
+
+    // Increment usage metrics
+    await incrementUsage(req.userDoc, 'resume');
 
     res.status(201).json({
       message: 'Interview report generated successfully',
