@@ -12,9 +12,12 @@ export const useAuth = () => {
       const data = await login(email, password);
       if (data?.user) {
         setUser(data.user);
+        return { success: true };
       }
-    } catch (error) {
-      console.error(error);
+      return { success: false, error: 'Invalid server response structure.' };
+    } catch (err) {
+      setUser(null);
+      return { success: false, error: err?.response?.data?.message || 'Login failed. Please verify your credentials.' };
     } finally {
       setLoading(false);
     }
@@ -26,9 +29,12 @@ export const useAuth = () => {
       const data = await register(username, email, password);
       if (data?.user) {
         setUser(data.user);
+        return { success: true };
       }
-    } catch (error) {
-      console.error(error);
+      return { success: false, error: 'Registration succeeded but session could not be established.' };
+    } catch (err) {
+      setUser(null);
+      return { success: false, error: err?.response?.data?.message || 'Registration failed. Email might already be registered.' };
     } finally {
       setLoading(false);
     }
@@ -38,8 +44,8 @@ export const useAuth = () => {
     setLoading(true);
     try {
       await logout();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      setUser(null);
     } finally {
       setUser(null);
       setLoading(false);

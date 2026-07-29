@@ -1,87 +1,106 @@
 import React from 'react';
-import { Bot, Cpu, Sparkles, Activity, Shield } from 'lucide-react';
+import { FileSearch, MessageSquare, ClipboardCheck, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-const AuthVisual = ({ title = "ACE YOUR INTERVIEW.", subtitle = "AI-powered mock interview simulator for technical and behavioral practice." }) => {
-  return (
-    <div className="flex flex-col justify-between h-full w-full py-4 lg:py-6 text-slate-100">
-      {/* Top Brand Logo */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center font-bold">
-            <Bot className="w-6 h-6 stroke-[2.5]" />
-          </div>
-          <span className="font-extrabold text-xl tracking-tight text-white font-mono">
-            INTERVIEW<span className="text-slate-400">.AI</span>
-          </span>
+const features = [
+  { icon: FileSearch, label: 'Resume analysis' },
+  { icon: MessageSquare, label: 'Mock interviews' },
+  { icon: ClipboardCheck, label: 'Skill quizzes' },
+];
+
+const AuthVisual = ({
+  title = 'Your interview preparation workspace.',
+  subtitle = 'Analyze roles, practice with AI-led interviews, and track progress — all in one focused environment.',
+}) => (
+  <section className="relative flex min-h-[480px] flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/10 p-8 lg:p-10 select-none">
+    {/* Animated background grid */}
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <svg className="absolute inset-0 h-full w-full opacity-[0.12]" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+            <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#71717a" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+      </svg>
+
+      {/* Orbiting rings */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
+        className="absolute left-1/2 top-[38%] h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full border border-zinc-850"
+      />
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+        className="absolute left-1/2 top-[38%] h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-zinc-900"
+      />
+
+      {/* Center node */}
+      <div className="absolute left-1/2 top-[38%] flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950 shadow-md">
+        <Sparkles className="h-6 w-6 text-zinc-350" strokeWidth={1.5} />
+      </div>
+
+      {/* Floating feature pills */}
+      {features.map((item, i) => {
+        const Icon = item.icon;
+        const positions = [
+          'left-[6%] top-[20%]',
+          'right-[6%] top-[45%]',
+          'left-[10%] bottom-[20%]',
+        ];
+        return (
+          <motion.div
+            key={item.label}
+            animate={{ y: [0, -4, 0] }}
+            transition={{
+              repeat: Infinity,
+              duration: 4,
+              ease: "easeInOut",
+              delay: i * 0.8,
+            }}
+            className={`absolute flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 shadow-sm ${positions[i]}`}
+          >
+            <Icon className="h-3.5 w-3.5 text-zinc-400" strokeWidth={1.5} />
+            <span className="text-[10px] font-bold text-zinc-400">{item.label}</span>
+          </motion.div>
+        );
+      })}
+    </div>
+
+    {/* Content */}
+    <div className="relative z-10 flex flex-1 flex-col justify-between">
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-805 bg-zinc-950 text-zinc-200">
+          <Sparkles className="h-4.5 w-4.5" strokeWidth={1.5} />
         </div>
-
-        <div className="hidden sm:flex items-center gap-2 bg-[#161926] px-3 py-1.5 rounded-full border border-slate-800 text-xs font-mono text-slate-300">
-          <span className="w-2 h-2 rounded-full bg-slate-400 animate-ping"></span>
-          <span>SYSTEM_READY</span>
+        <div>
+          <p className="text-xs font-bold tracking-tight text-zinc-50 leading-none">PrepAI</p>
+          <p className="text-[9px] font-medium text-zinc-500 mt-1 select-none">Interview workspace</p>
         </div>
       </div>
 
-      {/* Center 3D Animated AI Model & Waveform Display */}
-      <div className="my-8 lg:my-auto flex flex-col items-center justify-center relative">
-        {/* 3D Animated Orb Core */}
-        <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center perspective-1000">
-          
-          {/* Outer Rotating Ring 1 */}
-          <div className="absolute inset-0 rounded-full border border-slate-700/60 border-dashed animate-[spin_20s_linear_infinite]"></div>
+      <div className="pt-24 mt-auto">
+        <h1 className="max-w-xs text-xl font-bold leading-snug tracking-tight text-zinc-50 lg:text-2xl select-text">
+          {title}
+        </h1>
+        <p className="mt-2.5 max-w-xs text-xs leading-relaxed text-zinc-500 select-text">{subtitle}</p>
 
-          {/* Outer Rotating Ring 2 (Tilted 3D perspective effect) */}
-          <div className="absolute inset-4 rounded-full border border-slate-600/40 animate-[spin_12s_linear_infinite_reverse] [transform:rotateX(60deg)_rotateY(15deg)]"></div>
-          
-          {/* Outer Rotating Ring 3 */}
-          <div className="absolute inset-8 rounded-full border border-slate-500/30 animate-[spin_16s_linear_infinite] [transform:rotateX(25deg)_rotateY(60deg)]"></div>
-
-          {/* Inner Glowing Core Container */}
-          <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-[#161926] border border-slate-700 flex flex-col items-center justify-center shadow-2xl relative z-10 backdrop-blur-sm animate-[pulse_4s_ease-in-out_infinite]">
-            <Bot className="w-10 h-10 sm:w-12 sm:h-12 text-white mb-2" />
-            
-            {/* Animated Audio Equalizer Bars */}
-            <div className="flex items-end gap-1 h-5">
-              <span className="w-1 bg-slate-300 rounded-full animate-[bounce_1s_infinite_100ms] h-3"></span>
-              <span className="w-1 bg-white rounded-full animate-[bounce_1s_infinite_300ms] h-5"></span>
-              <span className="w-1 bg-slate-400 rounded-full animate-[bounce_1s_infinite_200ms] h-4"></span>
-              <span className="w-1 bg-white rounded-full animate-[bounce_1s_infinite_400ms] h-2"></span>
-              <span className="w-1 bg-slate-300 rounded-full animate-[bounce_1s_infinite_150ms] h-4"></span>
+        <div className="mt-6 flex gap-6 border-t border-zinc-850 pt-5">
+          {[
+            { value: '3', label: 'Core tools' },
+            { value: 'AI', label: 'Analysis engines' },
+            { value: 'Secure', label: 'Workspace' },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <p className="text-xs font-bold text-zinc-300 font-mono">{stat.value}</p>
+              <p className="mt-1 text-[9px] font-semibold text-zinc-500 uppercase tracking-wider">{stat.label}</p>
             </div>
-          </div>
-
-          {/* Floating Floating Satellite Badges (Responsive Positioned) */}
-          <div className="absolute -top-2 -right-2 sm:right-0 bg-[#161926] border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-mono shadow-lg animate-bounce [animation-duration:3s]">
-            <Cpu className="w-3.5 h-3.5 text-slate-300" />
-            <span>AI Core v4.2</span>
-          </div>
-
-          <div className="absolute -bottom-2 -left-2 sm:left-0 bg-[#161926] border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-mono shadow-lg animate-bounce [animation-duration:4s]">
-            <Activity className="w-3.5 h-3.5 text-slate-300" />
-            <span>Voice Speech Ready</span>
-          </div>
+          ))}
         </div>
-
-        {/* Headline Below Visual */}
-        <div className="text-center mt-8 max-w-md">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-3">
-            {title}
-          </h1>
-          <p className="text-slate-400 text-sm sm:text-base font-normal leading-relaxed">
-            {subtitle}
-          </p>
-        </div>
-      </div>
-
-      {/* Minimal Footer */}
-      <div className="flex items-center justify-between text-xs text-slate-600 font-mono border-t border-slate-900 pt-4">
-        <span>INTERVIEW.AI</span>
-        <span className="flex items-center gap-1">
-          <Shield className="w-3.5 h-3.5" />
-          Encrypted & Secure
-        </span>
       </div>
     </div>
-  );
-};
+  </section>
+);
 
 export default AuthVisual;
