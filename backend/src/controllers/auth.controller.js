@@ -73,6 +73,11 @@ OTP Code: ${otp}
         };
       }
 
+      // Set connection, greeting, and socket timeouts (3 seconds) to prevent hanging on serverless platforms
+      transporterOpts.connectionTimeout = 3000;
+      transporterOpts.greetingTimeout = 3000;
+      transporterOpts.socketTimeout = 3000;
+
       const transporter = nodemailer.createTransport(transporterOpts);
 
       await transporter.sendMail({
