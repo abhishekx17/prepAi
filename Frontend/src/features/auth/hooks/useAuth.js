@@ -6,7 +6,8 @@ import {
   logout, 
   verifyRegisterOTP, 
   verifyLoginOTP, 
-  loginWithGoogle 
+  loginWithGoogle,
+  getMe
 } from '../services/auth.api';
 
 export const useAuth = () => {
@@ -105,6 +106,18 @@ export const useAuth = () => {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const data = await getMe();
+      if (data?.user) {
+        setUser(data.user);
+        return data.user;
+      }
+    } catch (err) {
+      console.error('Failed to refresh user context:', err);
+    }
+  };
+
   return { 
     user, 
     loading, 
@@ -113,6 +126,7 @@ export const useAuth = () => {
     handleRegister,
     handleVerifyRegisterOTP,
     handleLogout,
-    handleGoogleAuth
+    handleGoogleAuth,
+    refreshUser
   };
 };

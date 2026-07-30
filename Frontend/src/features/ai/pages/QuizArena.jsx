@@ -142,7 +142,7 @@ const QuizArena = () => {
   return (
     <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col">
       {/* Top Status Header */}
-      <header className="px-6 py-3 bg-zinc-950 border-b border-zinc-855 flex items-center justify-between z-10 shrink-0 select-none">
+      <header className="px-6 py-3 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-850/60 flex items-center justify-between sticky top-0 z-20 shrink-0 select-none">
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
@@ -150,7 +150,7 @@ const QuizArena = () => {
                 navigate('/dashboard');
               }
             }}
-            className="text-zinc-500 hover:text-zinc-350 transition-colors cursor-pointer"
+            className="text-zinc-550 hover:text-zinc-350 transition-colors cursor-pointer"
             title="Exit Quiz"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
@@ -176,18 +176,46 @@ const QuizArena = () => {
         </div>
       </header>
 
+      {/* Linear progress bar */}
+      <div className="w-full h-0.5 bg-zinc-900 relative shrink-0">
+        <div 
+          className="absolute h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-300"
+          style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+        />
+      </div>
+
       {/* Test Body Area */}
       <div className="flex-1 max-w-2xl w-full mx-auto p-4 sm:p-8 lg:p-12 flex flex-col justify-center gap-6">
         
         {/* Question Text Card */}
-        <div className="bg-zinc-900/10 border border-zinc-805 rounded-2xl p-6 sm:p-8 shadow-inner relative overflow-hidden select-text">
-          <div className="flex items-center gap-1.5 mb-3 text-zinc-500 select-none">
-            <BookOpen className="w-4 h-4" strokeWidth={1.5} />
-            <span className="text-[9px] font-mono font-bold uppercase tracking-wider">Question Card</span>
+        <div className="bg-zinc-900/40 border border-zinc-850 rounded-2xl overflow-hidden shadow-2xl relative select-text">
+          {/* macOS controls */}
+          <div className="flex items-center justify-between bg-zinc-950/60 border-b border-zinc-850/60 px-5 py-3 select-none">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
+              </div>
+              <span className="text-[10px] font-mono text-zinc-550 font-bold uppercase tracking-wider ml-1.5 flex items-center gap-1.5">
+                <BookOpen className="w-3 h-3 text-zinc-400" />
+                question_spec.md
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+              <span className="text-[9px] font-mono text-sky-400 uppercase tracking-widest font-bold">
+                ACTIVE
+              </span>
+            </div>
           </div>
-          <h2 className="text-base font-bold text-zinc-100 leading-relaxed">
-            {currentQuestion.question}
-          </h2>
+          
+          <div className="p-6 sm:p-8">
+            <h2 className="text-sm sm:text-base font-semibold text-zinc-150 leading-relaxed font-sans">
+              {currentQuestion.question}
+            </h2>
+          </div>
         </div>
 
         {/* Options Selection grid */}
@@ -212,14 +240,14 @@ const QuizArena = () => {
                     onClick={() => handleSelectOption(optIdx)}
                     className={`w-full flex items-center gap-4 p-4.5 rounded-xl border text-left transition-all cursor-pointer group select-none ${
                       isSelected 
-                        ? 'border-zinc-300 bg-zinc-900 text-zinc-50 font-semibold' 
-                        : 'border-zinc-850 bg-zinc-900/10 hover:border-zinc-700 text-zinc-300 hover:text-zinc-50'
+                        ? 'border-sky-500/50 bg-sky-950/15 text-sky-200 font-semibold shadow-lg shadow-sky-500/5 hover:border-sky-400' 
+                        : 'border-zinc-855 bg-zinc-900/10 hover:border-zinc-700 text-zinc-300 hover:text-zinc-50 hover:bg-zinc-900/20 hover:scale-[1.005]'
                     }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs transition-colors shrink-0 ${
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs transition-all shrink-0 ${
                       isSelected 
-                        ? 'bg-zinc-50 text-zinc-950' 
-                        : 'bg-zinc-950 group-hover:bg-zinc-900 text-zinc-500 group-hover:text-zinc-300'
+                        ? 'bg-sky-500 text-white border border-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.3)]' 
+                        : 'bg-zinc-950 group-hover:bg-zinc-900 text-zinc-500 group-hover:text-zinc-300 border border-zinc-850'
                     }`}>
                       {label}
                     </div>
@@ -238,7 +266,7 @@ const QuizArena = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-3 bg-red-955/10 border border-red-950/20 rounded-xl text-xs text-red-400 font-medium flex items-center gap-2 select-none"
+              className="p-3 bg-red-950/10 border border-red-900/20 rounded-xl text-xs text-red-400 font-medium flex items-center gap-2 select-none"
             >
               <HelpCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
@@ -263,7 +291,7 @@ const QuizArena = () => {
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex items-center gap-1.5 py-2 px-5 rounded-lg text-xs font-bold bg-zinc-50 text-zinc-950 hover:bg-white transition-colors disabled:opacity-50 cursor-pointer shadow-md"
+              className="flex items-center gap-1.5 py-2 px-5 rounded-lg text-xs font-bold bg-zinc-50 text-zinc-950 hover:bg-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer shadow-md"
             >
               {submitting ? (
                 <>
@@ -273,7 +301,7 @@ const QuizArena = () => {
               ) : (
                 <>
                   <CheckSquare className="w-4 h-4" strokeWidth={1.5} />
-                  <span>Submit quiz</span>
+                  <span>Submit Quiz</span>
                 </>
               )}
             </button>

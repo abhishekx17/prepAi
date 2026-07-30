@@ -50,22 +50,37 @@ const Login = () => {
       }
     };
 
+    let checkInterval;
+
     if (window.google) {
       renderGoogleBtn();
     } else {
-      const existingScript = document.getElementById('google-gsi-sclient');
-      if (existingScript) {
-        existingScript.addEventListener('load', renderGoogleBtn);
-      } else {
-        const script = document.createElement('script');
+      let script = document.getElementById('google-gsi-sclient');
+      if (!script) {
+        script = document.createElement('script');
         script.id = 'google-gsi-sclient';
         script.src = 'https://accounts.google.com/gsi/client';
         script.async = true;
         script.defer = true;
         document.head.appendChild(script);
-        script.onload = renderGoogleBtn;
       }
+
+      let attempts = 0;
+      checkInterval = setInterval(() => {
+        attempts++;
+        if (window.google) {
+          clearInterval(checkInterval);
+          renderGoogleBtn();
+        } else if (attempts > 50) {
+          clearInterval(checkInterval);
+          console.error('Google Sign-In SDK failed to load.');
+        }
+      }, 100);
     }
+
+    return () => {
+      if (checkInterval) clearInterval(checkInterval);
+    };
   }, [otpSent]);
 
   const handleSubmitCredentials = async (e) => {
@@ -108,7 +123,7 @@ const Login = () => {
   if (loading) return <LoadingScreen message="Establishing session" />;
 
   return (
-    <main className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 dark:bg-zinc-955 transition-colors duration-300 select-none">
+    <main className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 dark:bg-zinc-950 transition-colors duration-300 select-none">
       
       {/* Left Column: Premium Branding */}
       <section className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-white dark:bg-zinc-900 border-r border-slate-200 dark:border-zinc-800 transition-colors duration-300 relative overflow-hidden">

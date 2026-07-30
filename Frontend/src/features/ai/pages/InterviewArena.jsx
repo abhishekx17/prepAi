@@ -15,6 +15,61 @@ import {
   ArrowLeft
 } from 'lucide-react';
 
+// A zero-dependency JavaScript syntax highlighter tokenizer
+const highlightJS = (code) => {
+  if (!code) return '';
+  
+  // Combine all token regexes into one big regex with capture groups
+  const regex = new RegExp(
+    '(\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/)' + // Group 1: Comments
+    '|("(?:\\\\.|[^"\\\\])*"|\\\'(?:\\\\.|[^\\\'\\\\])*\\\'|`(?:\\\\.|[^`\\\\])*`)' + // Group 2: Strings
+    '|\\b(function|const|let|var|return|if|else|for|while|do|switch|case|break|default|import|export|from|class|extends|new|try|catch|finally|throw|async|await|true|false|null|undefined)\\b' + // Group 3: Keywords
+    '|\\b(console|window|document|Object|Array|String|Number|Boolean|Promise|Map|Set|Math)\\b' + // Group 4: Built-ins
+    '|\\b([a-zA-Z_]\\w*)(?=\\s*\\()' + // Group 5: Function calls
+    '|\\b(\\d+)\\b', // Group 6: Numbers
+    'g'
+  );
+
+  let lastIndex = 0;
+  let html = '';
+
+  const escapeHtml = (text) => {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  };
+
+  code.replace(regex, (match, g1, g2, g3, g4, g5, g6, offset) => {
+    // Append text since last match
+    const textBefore = code.slice(lastIndex, offset);
+    html += escapeHtml(textBefore);
+
+    // Append wrapped match
+    if (g1) {
+      html += `<span class="text-zinc-550 italic select-none">${escapeHtml(match)}</span>`;
+    } else if (g2) {
+      html += `<span class="text-emerald-400 font-medium">${escapeHtml(match)}</span>`;
+    } else if (g3) {
+      html += `<span class="text-pink-400 font-bold">${escapeHtml(match)}</span>`;
+    } else if (g4) {
+      html += `<span class="text-amber-400 font-semibold">${escapeHtml(match)}</span>`;
+    } else if (g5) {
+      html += `<span class="text-sky-400 font-semibold">${escapeHtml(match)}</span>`;
+    } else if (g6) {
+      html += `<span class="text-orange-400 font-medium">${escapeHtml(match)}</span>`;
+    } else {
+      html += escapeHtml(match);
+    }
+
+    lastIndex = offset + match.length;
+    return match;
+  });
+
+  html += escapeHtml(code.slice(lastIndex));
+  return html;
+};
+
 const InterviewArena = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,8 +86,9 @@ const InterviewArena = () => {
   const [hint, setHint] = useState('');
   const [requestingHint, setRequestingHint] = useState(false);
 
-  // References for editor line numbers
+  // References for editor line numbers and scroll syncing
   const codeTextareaRef = useRef(null);
+  const preRef = useRef(null);
 
   // Load question
   useEffect(() => {
@@ -89,6 +145,14 @@ const InterviewArena = () => {
   const handleResetCode = () => {
     if (window.confirm('Are you sure you want to reset the editor to the starter template?')) {
       setCode(sessionInfo?.question?.codeTemplate || '');
+    }
+  };
+
+  // Sync scroll offset from textarea to backdrop pre block
+  const handleScroll = (e) => {
+    if (preRef.current) {
+      preRef.current.scrollTop = e.target.scrollTop;
+      preRef.current.scrollLeft = e.target.scrollLeft;
     }
   };
 
@@ -165,9 +229,12 @@ const InterviewArena = () => {
   const { question, currentQuestionIndex, totalQuestions } = sessionInfo;
 
   return (
-    <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col">
+    <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col relative overflow-hidden">
+      {/* Background radial soft light-glow decoration */}
+      <div className="absolute inset-0 bg-radial-[circle_at_center,_var(--tw-gradient-stops)] from-sky-950/10 via-transparent to-transparent pointer-events-none z-0"></div>
+
       {/* Top Header Status Bar */}
-      <header className="px-6 py-3 bg-zinc-950 border-b border-zinc-850 flex items-center justify-between z-10 shrink-0 select-none">
+      <header className="px-6 py-3 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 flex items-center justify-between z-10 shrink-0 select-none relative">
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
@@ -175,27 +242,27 @@ const InterviewArena = () => {
                 navigate('/dashboard');
               }
             }}
-            className="text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+            className="text-zinc-500 hover:text-zinc-350 hover:bg-zinc-905/60 p-1.5 rounded-lg border border-transparent hover:border-zinc-800 transition-all cursor-pointer"
             title="Exit Session"
           >
-            <ArrowLeft className="w-5 h-5" strokeWidth={1.5} />
+            <ArrowLeft className="w-4 h-4" strokeWidth={2} />
           </button>
-          <div className="border-l border-zinc-800 h-5"></div>
+          <div className="border-l border-zinc-850 h-5"></div>
           <div>
             <h2 className="text-xs font-bold text-zinc-200 leading-none">{sessionInfo.jobTitle}</h2>
-            <p className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-wide">
+            <p className="text-[9px] text-zinc-505 font-mono mt-1.5 uppercase tracking-wider font-bold">
               {sessionInfo.focusArea} | {sessionInfo.difficulty} Level
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="text-[10px] font-mono font-bold px-3 py-1 bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-md">
+          <span className="text-[9px] font-mono font-black px-3 py-1 bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-lg select-none">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </span>
-          <div className="w-20 bg-zinc-900 h-1 rounded-full hidden sm:block overflow-hidden border border-zinc-850">
+          <div className="w-24 bg-zinc-900 h-1.5 rounded-full hidden sm:block overflow-hidden border border-zinc-850 select-none">
             <div 
-              className="bg-zinc-200 h-full transition-all duration-500"
+              className="bg-gradient-to-r from-sky-500 to-indigo-500 h-full rounded-full transition-all duration-500"
               style={{ width: `${((currentQuestionIndex) / totalQuestions) * 100}%` }}
             ></div>
           </div>
@@ -203,32 +270,43 @@ const InterviewArena = () => {
       </header>
 
       {/* Main Split Grid Area */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden h-[calc(100vh-53px)]">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden h-[calc(100vh-53px)] relative z-10">
         
         {/* Left Side: Interviewer / Question Box */}
-        <section className="lg:col-span-5 border-r border-zinc-850 bg-zinc-950 flex flex-col p-6 sm:p-8 overflow-y-auto justify-between gap-6">
+        <section className="lg:col-span-5 border-r border-zinc-905 bg-zinc-950 flex flex-col p-6 sm:p-8 overflow-y-auto justify-between gap-6 relative">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-100 flex items-center justify-center relative select-none">
-                <Bot className="w-5 h-5" strokeWidth={1.5} />
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-zinc-400 rounded-full border border-zinc-950"></span>
+              <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-100 flex items-center justify-center relative select-none">
+                <Bot className="w-5 h-5 text-sky-400" strokeWidth={1.5} />
+                <div className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-zinc-950"></span>
+                </div>
               </div>
               <div className="select-none">
-                <h4 className="text-xs font-bold text-zinc-200 font-mono uppercase tracking-wider">AI Interviewer</h4>
-                <div className="flex items-center gap-1 h-3 mt-0.5">
-                  <span className="w-0.5 bg-zinc-600 rounded-full h-1.5 animate-[bounce_1s_infinite_100ms]"></span>
-                  <span className="w-0.5 bg-zinc-550 rounded-full h-2.5 animate-[bounce_1s_infinite_300ms]"></span>
-                  <span className="w-0.5 bg-zinc-500 rounded-full h-2 animate-[bounce_1s_infinite_200ms]"></span>
+                <h4 className="text-xs font-bold text-zinc-200 font-mono uppercase tracking-wider flex items-center gap-1.5">
+                  AI Interviewer
+                  <span className="rounded-full bg-sky-950/40 border border-sky-800/40 px-1.5 py-0.5 text-[8px] font-black text-sky-400">Online</span>
+                </h4>
+                <div className="flex items-center gap-1 h-3 mt-1.5">
+                  <span className="w-0.5 bg-sky-505 rounded-full h-1.5 animate-[bounce_1s_infinite_100ms]"></span>
+                  <span className="w-0.5 bg-indigo-505 rounded-full h-2.5 animate-[bounce_1s_infinite_300ms]"></span>
+                  <span className="w-0.5 bg-sky-405 rounded-full h-2 animate-[bounce_1s_infinite_200ms]"></span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-zinc-900/10 border border-zinc-800 rounded-xl p-5 shadow-sm space-y-4">
-              <div className="flex items-center gap-1.5 select-none">
-                <Info className="w-3.5 h-3.5 text-zinc-500" strokeWidth={1.5} />
-                <span className="text-[9px] font-mono font-bold uppercase text-zinc-500 tracking-wider">Question Prompt</span>
+            {/* Question Card Prompt */}
+            <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 shadow-xl backdrop-blur-sm group select-text">
+              {/* Highlight Top border */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0"></div>
+              
+              <div className="flex items-center gap-1.5 select-none mb-4">
+                <Info className="w-3.5 h-3.5 text-sky-400" strokeWidth={2} />
+                <span className="text-[9px] font-mono font-black uppercase text-sky-400 tracking-wider">Question Prompt</span>
               </div>
-              <p className="text-zinc-200 text-sm leading-relaxed font-medium">
+              
+              <p className="text-zinc-100 text-sm sm:text-base leading-relaxed font-semibold">
                 {question.question}
               </p>
             </div>
@@ -237,15 +315,15 @@ const InterviewArena = () => {
             <AnimatePresence mode="wait">
               {hint ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 6 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  className="p-4 bg-zinc-900/20 border border-zinc-800 rounded-xl flex gap-3 text-zinc-300"
+                  exit={{ opacity: 0, y: -8 }}
+                  className="p-5 bg-amber-500/5 border border-amber-500/20 text-amber-200 rounded-2xl flex gap-3.5 backdrop-blur-sm select-text"
                 >
-                  <Lightbulb className="w-5 h-5 shrink-0 mt-0.5 text-zinc-450 animate-pulse" strokeWidth={1.5} />
+                  <Lightbulb className="w-5.5 h-5.5 shrink-0 text-amber-400 animate-pulse" strokeWidth={1.5} />
                   <div>
-                    <h5 className="text-[9px] font-bold font-mono uppercase tracking-wider mb-1 text-zinc-400">Interviewer Suggestion</h5>
-                    <p className="text-xs leading-relaxed">{hint}</p>
+                    <h5 className="text-[9px] font-black font-mono uppercase tracking-wider mb-1 text-amber-450 select-none">Interviewer Suggestion</h5>
+                    <p className="text-xs leading-relaxed font-medium">{hint}</p>
                   </div>
                 </motion.div>
               ) : (
@@ -254,12 +332,12 @@ const InterviewArena = () => {
                     type="button"
                     onClick={handleRequestHint}
                     disabled={requestingHint}
-                    className="flex items-center gap-2 text-[10px] font-mono font-bold text-zinc-400 hover:text-zinc-200 transition-colors py-2 px-3 rounded-lg border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 disabled:opacity-50 cursor-pointer"
+                    className="flex items-center gap-2 text-[10px] font-mono font-black text-zinc-400 hover:text-zinc-100 hover:border-zinc-700 transition-all py-2.5 px-4 rounded-xl border border-zinc-800 bg-zinc-900/20 hover:bg-zinc-900/60 disabled:opacity-50 cursor-pointer shadow-sm select-none"
                   >
                     {requestingHint ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-400" />
                     ) : (
-                      <Lightbulb className="w-3 h-3" />
+                      <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
                     )}
                     <span>Request Hint</span>
                   </button>
@@ -268,9 +346,9 @@ const InterviewArena = () => {
             </AnimatePresence>
           </div>
 
-          <div className="text-[10px] text-zinc-650 font-mono flex items-center gap-2 border-t border-zinc-900 pt-4 select-none">
+          <div className="text-[9px] text-zinc-600 font-mono flex items-center gap-2 border-t border-zinc-900/80 pt-4 select-none">
             <Terminal className="w-3.5 h-3.5" />
-            <span>SESSION_SECURED_ACTIVE</span>
+            <span>SESSION_SECURED_ACTIVE // SSL_VERIFIED</span>
           </div>
         </section>
 
@@ -282,50 +360,77 @@ const InterviewArena = () => {
               <div className="flex-1 flex flex-col overflow-hidden p-6 gap-5">
                 
                 {/* Code Editor Panel */}
-                <div className="flex-1 flex flex-col overflow-hidden border border-zinc-800 rounded-xl bg-zinc-950 relative focus-within:border-zinc-700">
-                  {/* Editor Header */}
-                  <div className="px-4 py-2 border-b border-zinc-850 bg-zinc-900/20 flex items-center justify-between text-[11px] shrink-0 select-none">
-                    <div className="flex items-center gap-2 text-zinc-400 font-mono">
-                      <FileCode className="w-3.5 h-3.5" strokeWidth={1.5} />
-                      <span>solution.js</span>
+                <div className="flex-1 flex flex-col overflow-hidden border border-zinc-800 bg-zinc-900/25 rounded-2xl relative focus-within:border-zinc-700 shadow-xl backdrop-blur-sm">
+                  {/* macOS Mock Header Bar */}
+                  <div className="px-4 py-3 border-b border-zinc-850 bg-zinc-900/40 flex items-center justify-between shrink-0 select-none">
+                    <div className="flex items-center gap-3">
+                      {/* Window Controls */}
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 border border-rose-600/30"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 border border-amber-600/30"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 border border-emerald-600/30"></span>
+                      </div>
+                      <div className="border-l border-zinc-800 h-3 mx-1"></div>
+                      {/* File Tab */}
+                      <div className="flex items-center gap-2 text-zinc-400 font-mono text-[10px] font-bold bg-zinc-950 px-3 py-1 rounded-lg border border-zinc-850 select-none">
+                        <span className="text-amber-500 font-extrabold text-[9px] font-mono select-none">JS</span>
+                        <span>solution.js</span>
+                      </div>
                     </div>
+                    
                     <button
                       type="button"
                       onClick={handleResetCode}
-                      className="flex items-center gap-1.5 text-zinc-550 hover:text-zinc-300 transition-colors cursor-pointer font-mono"
+                      className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-200 transition-colors cursor-pointer font-mono text-[10px] font-bold py-1 px-2.5 rounded-lg border border-zinc-850 bg-zinc-950/40 hover:bg-zinc-900"
                       title="Reset Template"
                     >
-                      <RefreshCw className="w-3 h-3" />
+                      <RefreshCw className="w-3 h-3 text-zinc-400" />
                       <span>Reset</span>
                     </button>
                   </div>
 
-                  {/* Editor Content Area */}
-                  <div className="flex-1 flex overflow-y-auto font-mono text-xs leading-relaxed bg-zinc-900/10">
-                    <div className="w-10 select-none border-r border-zinc-850/60 bg-zinc-950 text-zinc-600 flex flex-col items-center py-4 font-mono pr-2 text-right">
+                  <div className="flex-1 flex overflow-y-auto font-mono text-xs bg-zinc-950/15">
+                    {/* Line Numbers */}
+                    <div className="w-10 select-none border-r border-zinc-850/60 bg-zinc-950/80 text-zinc-500 flex flex-col items-center py-4 font-mono pr-2 text-right leading-[21px]">
                       {getLineNumbers().map((num) => (
                         <div key={num} className="h-[21px]">{num}</div>
                       ))}
                     </div>
 
-                    <textarea
-                      ref={codeTextareaRef}
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      onKeyDown={handleCodeKeyDown}
-                      className="flex-1 bg-transparent text-zinc-100 py-4 px-3 outline-none resize-none font-mono min-h-full whitespace-pre overflow-x-auto tab-size-2 focus:ring-0 border-0"
-                      placeholder="// Write your solution function here..."
-                      spellCheck="false"
-                      style={{
-                        lineHeight: '21px',
-                        fontFamily: "monospace"
-                      }}
-                    />
+                    {/* Syntax Highlighter and Textarea Container */}
+                    <div className="flex-1 relative min-h-full font-mono text-xs leading-[21px] overflow-hidden">
+                      {/* Code overlay background highlighted block */}
+                      <pre 
+                        ref={preRef}
+                        className="absolute inset-0 p-4 pl-3 pointer-events-none whitespace-pre overflow-auto font-mono text-zinc-100 leading-[21px] select-none scrollbar-none"
+                        dangerouslySetInnerHTML={{ __html: highlightJS(code) }}
+                        style={{
+                          margin: 0,
+                          fontFamily: "var(--font-mono, monospace)"
+                        }}
+                      />
+                      
+                      {/* Actual interactive transparent textarea */}
+                      <textarea
+                        ref={codeTextareaRef}
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        onKeyDown={handleCodeKeyDown}
+                        onScroll={handleScroll}
+                        className="absolute inset-0 w-full h-full bg-transparent text-transparent caret-zinc-100 p-4 pl-3 outline-none resize-none font-mono leading-[21px] whitespace-pre overflow-auto tab-size-2 focus:ring-0 border-0 focus:outline-none"
+                        placeholder="// Write your solution function here..."
+                        spellCheck="false"
+                        style={{
+                          fontFamily: "var(--font-mono, monospace)"
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* Explanation text box */}
-                <div className="shrink-0 h-32 flex flex-col bg-zinc-900/10 border border-zinc-850 rounded-xl p-4 focus-within:border-zinc-700">
+                {/* Complexity/Explanation notes */}
+                <div className="shrink-0 h-28 flex flex-col bg-zinc-900/10 border border-zinc-850 rounded-2xl p-4 focus-within:border-zinc-700 relative overflow-hidden backdrop-blur-sm shadow-md">
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-sky-500/0 via-zinc-800 to-sky-500/0"></div>
                   <label htmlFor="codeExplanation" className="block text-[9px] font-bold text-zinc-500 mb-1.5 font-mono uppercase tracking-wider select-none">
                     Complexity & Strategy Notes
                   </label>
@@ -333,24 +438,25 @@ const InterviewArena = () => {
                     id="codeExplanation"
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="flex-1 bg-transparent text-zinc-200 outline-none resize-none text-xs placeholder:text-zinc-600 border-0 p-0 focus:ring-0 focus:outline-none"
+                    className="flex-1 bg-transparent text-zinc-100 outline-none resize-none text-xs placeholder:text-zinc-600 border-0 p-0 focus:ring-0 focus:outline-none select-text font-medium"
                     placeholder="Describe your algorithm's core strategy and state the Big-O time/space complexity..."
                   />
                 </div>
               </div>
             ) : (
               /* Conceptual / Behavioral Large Text Area */
-              <div className="flex-1 overflow-y-auto p-6 flex flex-col">
-                <div className="flex-1 flex flex-col bg-zinc-900/10 border border-zinc-800 rounded-xl p-5 focus-within:border-zinc-700">
-                  <label htmlFor="textAnswer" className="block text-[9px] font-bold text-zinc-500 mb-2.5 font-mono uppercase tracking-wider flex items-center gap-1.5 select-none">
-                    <Terminal className="w-3.5 h-3.5" />
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col select-text">
+                <div className="flex-1 flex flex-col bg-zinc-900/10 border border-zinc-800 rounded-2xl p-6 focus-within:border-zinc-700 relative overflow-hidden backdrop-blur-sm shadow-xl">
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-sky-500/0 via-zinc-800 to-sky-500/0"></div>
+                  <label htmlFor="textAnswer" className="block text-[9px] font-bold text-zinc-500 mb-3.5 font-mono uppercase tracking-wider flex items-center gap-1.5 select-none">
+                    <Terminal className="w-3.5 h-3.5 text-zinc-500" />
                     Your Response
                   </label>
                   <textarea
                     id="textAnswer"
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    className="flex-1 bg-transparent text-zinc-150 outline-none resize-none text-sm leading-relaxed placeholder:text-zinc-600 min-h-[300px] border-0 p-0 focus:ring-0 focus:outline-none"
+                    className="flex-1 bg-transparent text-zinc-100 outline-none resize-none text-sm leading-relaxed placeholder:text-zinc-650 min-h-[300px] border-0 p-0 focus:ring-0 focus:outline-none font-medium"
                     placeholder="Structure your response clearly. For behavioral questions, we recommend using the STAR framework (Situation, Task, Action, Result)..."
                   />
                 </div>
@@ -366,19 +472,19 @@ const InterviewArena = () => {
                   exit={{ opacity: 0 }}
                   className="mx-6 mb-4 p-3 bg-red-950/10 border border-red-950/30 rounded-lg text-xs text-red-400 font-medium flex items-center gap-2"
                 >
-                  <Info className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                  <Info className="w-4 h-4 shrink-0 text-red-500" strokeWidth={1.5} />
                   <span>{error}</span>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Submit Footer Action Panel */}
-            <div className="px-6 py-4 bg-zinc-950 border-t border-zinc-850 flex items-center justify-between shrink-0 select-none">
+            <div className="px-6 py-4 bg-zinc-950 border-t border-zinc-900 flex items-center justify-between shrink-0 select-none relative">
               <span className="text-[10px] font-medium text-zinc-500 hidden sm:block">Answers are saved temporarily to your session log.</span>
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto ml-auto bg-zinc-50 hover:bg-white disabled:bg-zinc-800 text-zinc-950 disabled:text-zinc-500 font-semibold text-xs py-2 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full sm:w-auto ml-auto bg-zinc-100 hover:bg-white disabled:bg-zinc-800 text-zinc-950 disabled:text-zinc-500 font-bold text-xs py-2.5 px-5 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-md"
               >
                 {submitting ? (
                   <>
@@ -388,7 +494,7 @@ const InterviewArena = () => {
                 ) : (
                   <>
                     <span>Submit response</span>
-                    <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                    <ChevronRight className="w-4 h-4 text-zinc-800" strokeWidth={2} />
                   </>
                 )}
               </button>

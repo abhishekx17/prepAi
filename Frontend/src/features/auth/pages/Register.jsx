@@ -51,22 +51,37 @@ const Register = () => {
       }
     };
 
+    let checkInterval;
+
     if (window.google) {
       renderGoogleBtn();
     } else {
-      const existingScript = document.getElementById('google-gsi-sclient');
-      if (existingScript) {
-        existingScript.addEventListener('load', renderGoogleBtn);
-      } else {
-        const script = document.createElement('script');
+      let script = document.getElementById('google-gsi-sclient');
+      if (!script) {
+        script = document.createElement('script');
         script.id = 'google-gsi-sclient';
         script.src = 'https://accounts.google.com/gsi/client';
         script.async = true;
         script.defer = true;
         document.head.appendChild(script);
-        script.onload = renderGoogleBtn;
       }
+
+      let attempts = 0;
+      checkInterval = setInterval(() => {
+        attempts++;
+        if (window.google) {
+          clearInterval(checkInterval);
+          renderGoogleBtn();
+        } else if (attempts > 50) {
+          clearInterval(checkInterval);
+          console.error('Google Sign-In SDK failed to load.');
+        }
+      }, 100);
     }
+
+    return () => {
+      if (checkInterval) clearInterval(checkInterval);
+    };
   }, [otpSent]);
 
   const handleSubmitCredentials = async (e) => {

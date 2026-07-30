@@ -10,6 +10,8 @@ import {
   LogOut,
   Plus,
   Sparkles,
+  BarChart3,
+  Award,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../../../components/ui/Button';
@@ -217,6 +219,139 @@ const AppSidebar = ({
           {renderNavGroup(workspaceItems, 'Workspace')}
           {renderNavGroup(archiveItems, 'Archive')}
         </nav>
+
+        {/* Usage Panel */}
+        <div className="border-t border-slate-200 dark:border-zinc-800 p-3 shrink-0 overflow-hidden">
+          {isCollapsed ? (
+            <div 
+              className="flex h-10 w-full items-center justify-center rounded-xl bg-slate-50/50 dark:bg-white/[0.02] border border-slate-100 dark:border-zinc-800/50 text-slate-400 dark:text-zinc-500 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-all cursor-help relative group"
+              title={`${user?.tier || 'Free'} Plan Usage:\n• Resumes: ${user?.usage?.resumesAnalyzed || 0}${user?.tier === 'Free' || !user?.tier ? '/5' : ''}\n• Interviews: ${user?.usage?.interviewsStarted || 0}${user?.tier === 'Free' || !user?.tier ? '/1' : ''}\n• Quizzes: ${user?.usage?.quizzesTaken || 0}${user?.tier === 'Free' || !user?.tier ? '/3' : ''}`}
+            >
+              <BarChart3 className="h-4.5 w-4.5" strokeWidth={1.5} />
+              
+              {(user?.tier === 'Free' || !user?.tier) && (
+                ((user?.usage?.resumesAnalyzed || 0) >= 5 || (user?.usage?.interviewsStarted || 0) >= 1 || (user?.usage?.quizzesTaken || 0) >= 3) ? (
+                  <span className="absolute top-2 right-2 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                  </span>
+                ) : ((user?.usage?.resumesAnalyzed || 0) >= 4 || (user?.usage?.quizzesTaken || 0) >= 2) ? (
+                  <span className="absolute top-2 right-2 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                  </span>
+                ) : null
+              )}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-slate-200/80 dark:border-zinc-800/80 bg-slate-50/50 dark:bg-zinc-900/50 p-3 shadow-sm space-y-3.5 backdrop-blur-sm relative overflow-hidden group">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 flex items-center gap-1.5 uppercase tracking-wide">
+                  <BarChart3 className="h-3.5 w-3.5 text-sky-500" strokeWidth={2} />
+                  Plan Usage
+                </span>
+                
+                {user?.tier === 'Pro' || user?.tier === 'Enterprise' ? (
+                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm border border-amber-400/25 select-none">
+                    <Award className="h-2.5 w-2.5" />
+                    {user.tier}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 border border-slate-300/30 dark:border-zinc-700/50 select-none">
+                    Free
+                  </span>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                {/* Resume Analyses */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-slate-600 dark:text-zinc-400">Resumes</span>
+                    <span className="text-slate-800 dark:text-zinc-200">
+                      {user?.usage?.resumesAnalyzed || 0}
+                      {user?.tier === 'Free' || !user?.tier ? ' / 5' : ''}
+                    </span>
+                  </div>
+                  {(user?.tier === 'Free' || !user?.tier) && (
+                    <div className="h-1 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          (user?.usage?.resumesAnalyzed || 0) >= 5 
+                            ? 'bg-rose-500' 
+                            : (user?.usage?.resumesAnalyzed || 0) >= 4 
+                            ? 'bg-amber-500' 
+                            : 'bg-gradient-to-r from-sky-500 to-indigo-500'
+                        }`}
+                        style={{ width: `${Math.min(((user?.usage?.resumesAnalyzed || 0) / 5) * 100, 100)}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Mock Interviews */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-slate-600 dark:text-zinc-400">Mock Interviews</span>
+                    <span className="text-slate-800 dark:text-zinc-200">
+                      {user?.usage?.interviewsStarted || 0}
+                      {user?.tier === 'Free' || !user?.tier ? ' / 1' : ''}
+                    </span>
+                  </div>
+                  {(user?.tier === 'Free' || !user?.tier) && (
+                    <div className="h-1 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          (user?.usage?.interviewsStarted || 0) >= 1 
+                            ? 'bg-rose-500' 
+                            : 'bg-gradient-to-r from-sky-500 to-indigo-500'
+                        }`}
+                        style={{ width: `${Math.min(((user?.usage?.interviewsStarted || 0) / 1) * 100, 100)}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Quizzes Taken */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-slate-600 dark:text-zinc-400">Skill Quizzes</span>
+                    <span className="text-slate-800 dark:text-zinc-200">
+                      {user?.usage?.quizzesTaken || 0}
+                      {user?.tier === 'Free' || !user?.tier ? ' / 3' : ''}
+                    </span>
+                  </div>
+                  {(user?.tier === 'Free' || !user?.tier) && (
+                    <div className="h-1 w-full bg-slate-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          (user?.usage?.quizzesTaken || 0) >= 3 
+                            ? 'bg-rose-500' 
+                            : (user?.usage?.quizzesTaken || 0) >= 2 
+                            ? 'bg-amber-500' 
+                            : 'bg-gradient-to-r from-sky-500 to-indigo-500'
+                        }`}
+                        style={{ width: `${Math.min(((user?.usage?.quizzesTaken || 0) / 3) * 100, 100)}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {(user?.tier === 'Free' || !user?.tier) && (
+                <div className="pt-2 border-t border-slate-200/50 dark:border-zinc-800/50">
+                  <button 
+                    type="button"
+                    onClick={() => alert('Upgrade flow is coming soon!')}
+                    className="w-full py-1.5 px-3 rounded-xl bg-gradient-to-r from-sky-500/10 to-indigo-500/10 dark:from-sky-500/5 dark:to-indigo-500/5 hover:from-sky-500 hover:to-indigo-500 text-sky-600 dark:text-sky-400 hover:text-white dark:hover:text-white border border-sky-500/15 dark:border-sky-500/5 hover:border-transparent text-[10px] font-bold text-center tracking-tight transition-all cursor-pointer shadow-sm hover:shadow-md hover:shadow-sky-500/10"
+                  >
+                    Upgrade to Pro
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* User Profile Footer */}
         <div className="border-t border-slate-200 dark:border-zinc-800 p-3 shrink-0 overflow-hidden">

@@ -113,9 +113,16 @@ const QuizDashboard = () => {
 
   const getScoreColor = (score, total) => {
     const percentage = (score / total) * 100;
-    if (percentage >= 80) return 'text-[#10B981] bg-[#10B981]/10 border-[#10B981]/20';
-    if (percentage >= 50) return 'text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20';
-    return 'text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/20';
+    if (percentage >= 80) return 'text-emerald-400 bg-emerald-950/20 border-emerald-900/30';
+    if (percentage >= 50) return 'text-amber-400 bg-amber-950/20 border-amber-900/30';
+    return 'text-rose-400 bg-rose-950/20 border-rose-900/30';
+  };
+
+  const getAverageScoreTheme = () => {
+    const avg = getAverageScore();
+    if (avg >= 80) return { text: 'text-emerald-400', circle: '#34d399' };
+    if (avg >= 50) return { text: 'text-amber-400', circle: '#fbbf24' };
+    return { text: 'text-rose-400', circle: '#fb7185' };
   };
 
   const steps = [
@@ -412,9 +419,9 @@ const QuizDashboard = () => {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="w-full bg-white hover:bg-slate-200 text-black font-semibold text-sm py-3 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border border-slate-250"
+                        className="w-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 active:scale-[0.99] border-0"
                       >
-                        <Play className="w-3.5 h-3.5 fill-current text-black stroke-[3]" />
+                        <Play className="w-3.5 h-3.5 fill-current text-white stroke-[3]" />
                         <span>Launch Quiz Arena</span>
                       </button>
                     </div>
@@ -435,7 +442,10 @@ const QuizDashboard = () => {
                     <div className="space-y-6 w-full">
                       {/* Average score gauge */}
                       <div className="relative w-32 h-32 mx-auto flex items-center justify-center">
-                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                        {/* Radial Glow */}
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-sky-500/5 to-indigo-500/5 blur-md" />
+                        
+                        <svg className="w-full h-full transform -rotate-90 relative z-10" viewBox="0 0 120 120">
                           <circle
                             cx="60"
                             cy="60"
@@ -448,7 +458,7 @@ const QuizDashboard = () => {
                             cx="60"
                             cy="60"
                             r="50"
-                            stroke="#ffffff"
+                            stroke={getAverageScoreTheme().circle}
                             strokeWidth="6"
                             fill="transparent"
                             strokeDasharray={2 * Math.PI * 50}
@@ -457,8 +467,8 @@ const QuizDashboard = () => {
                             className="transition-all duration-1000 ease-out"
                           />
                         </svg>
-                        <div className="absolute flex flex-col items-center justify-center">
-                          <span className="text-2xl font-black text-white">{getAverageScore()}%</span>
+                        <div className="absolute flex flex-col items-center justify-center z-10">
+                          <span className={`text-2xl font-black ${getAverageScoreTheme().text}`}>{getAverageScore()}%</span>
                           <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest mt-0.5">Average</span>
                         </div>
                       </div>

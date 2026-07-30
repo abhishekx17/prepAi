@@ -100,22 +100,65 @@ const ReportDetail = () => {
   };
 
   const getScoreTheme = (score) => {
+    if (score >= 80) {
+      return {
+        text: 'text-emerald-400',
+        bg: 'bg-emerald-950/10 border-emerald-900/30',
+        circle: '#34d399' // emerald-400
+      };
+    }
+    if (score >= 50) {
+      return {
+        text: 'text-amber-400',
+        bg: 'bg-amber-950/10 border-amber-900/30',
+        circle: '#fbbf24' // amber-400
+      };
+    }
     return {
-      text: 'text-zinc-50',
-      bg: 'bg-zinc-900 border-zinc-800',
-      circle: '#fafafa'
+      text: 'text-rose-400',
+      bg: 'bg-rose-950/10 border-rose-900/30',
+      circle: '#fb7185' // rose-400
     };
   };
 
   const getSeverityBadge = (severity) => {
     switch (severity.toLowerCase()) {
       case 'high':
-        return 'text-zinc-50 bg-zinc-900 border-zinc-700';
+        return 'text-rose-400 bg-rose-950/20 border-rose-900/30';
       case 'medium':
-        return 'text-zinc-350 bg-zinc-900 border-zinc-800';
+        return 'text-amber-400 bg-amber-950/20 border-amber-900/30';
       default:
-        return 'text-zinc-500 bg-zinc-905 border-zinc-850';
+        return 'text-sky-400 bg-sky-950/20 border-sky-900/30';
     }
+  };
+
+  const formatResumeText = (text) => {
+    if (!text) return <span className="text-zinc-500 italic">No resume snapshot provided.</span>;
+    
+    const lines = text.split('\n');
+    return lines.map((line, idx) => {
+      const trimmed = line.trim();
+      
+      const isHeading = /^(EXPERIENCE|PROJECTS|EDUCATION|SKILLS|SUMMARY|WORK HISTORY|LANGUAGES|CERTIFICATIONS|INTERNSHIPS|PUBLICATIONS|AWARDS|CONTACT|ABOUT ME)$/i.test(trimmed) || 
+                        (trimmed.length > 2 && trimmed.length < 35 && trimmed === trimmed.toUpperCase() && !trimmed.includes('.') && !trimmed.includes(','));
+
+      if (isHeading) {
+        return (
+          <div key={idx} className="mt-4 first:mt-0 mb-2 border-b border-zinc-800 pb-1 flex items-center gap-2">
+            <span className="w-1 h-3 bg-zinc-500 rounded-full"></span>
+            <span className="font-bold font-mono text-zinc-300 uppercase tracking-wider text-[10px] sm:text-xs">
+              {trimmed}
+            </span>
+          </div>
+        );
+      }
+      
+      return (
+        <div key={idx} className="text-zinc-400 text-xs leading-relaxed font-mono min-h-[1.1rem]">
+          {line}
+        </div>
+      );
+    });
   };
 
   if (loading) {
@@ -218,7 +261,7 @@ const ReportDetail = () => {
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center text-center">
-                <span className="text-2xl font-bold tracking-tight text-zinc-50">{report.matchScore}%</span>
+                <span className={`text-2xl font-bold tracking-tight ${scoreTheme.text}`}>{report.matchScore}%</span>
                 <span className="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-widest mt-0.5">Match</span>
               </div>
             </div>
@@ -272,24 +315,44 @@ const ReportDetail = () => {
                 className="space-y-8"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 select-text">
-                  <div className="bg-zinc-950 border border-zinc-850 p-5 rounded-xl">
-                    <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-3 flex items-center gap-2 select-none">
-                      <span className="w-1.5 h-1.5 bg-zinc-650 rounded-full"></span>
-                      Profile Notes
-                    </h3>
-                    <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap font-sans">
+                  {/* Profile Notes Card */}
+                  <div className="bg-zinc-950/80 border border-zinc-850/80 rounded-xl overflow-hidden flex flex-col backdrop-blur-md shadow-2xl">
+                    <div className="flex items-center justify-between border-b border-zinc-850/60 bg-zinc-900/30 px-4 py-2.5 select-none">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                        <span className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-wider">
+                          profile_briefing.md
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-mono text-zinc-500">
+                        {report.selfDescription ? `${report.selfDescription.split(/\s+/).length} words` : '0 words'}
+                      </span>
+                    </div>
+                    <div className="p-5 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent pr-2 select-text font-sans text-xs sm:text-sm leading-relaxed text-zinc-400">
                       {report.selfDescription || 'No profile notes provided.'}
-                    </p>
+                    </div>
                   </div>
                   
-                  <div className="bg-zinc-950 border border-zinc-850 p-5 rounded-xl">
-                    <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider mb-3 flex items-center gap-2 select-none">
-                      <span className="w-1.5 h-1.5 bg-zinc-650 rounded-full"></span>
-                      Resume Text
-                    </h3>
-                    <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto font-sans pr-1">
-                      {report.resume || 'No resume snapshot provided.'}
-                    </p>
+                  {/* Resume Text Card */}
+                  <div className="bg-zinc-950/80 border border-zinc-850/80 rounded-xl overflow-hidden flex flex-col backdrop-blur-md shadow-2xl">
+                    <div className="flex items-center justify-between border-b border-zinc-850/60 bg-zinc-900/30 px-4 py-2.5 select-none">
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-zinc-800"></div>
+                          <div className="w-2 h-2 rounded-full bg-zinc-800"></div>
+                          <div className="w-2 h-2 rounded-full bg-zinc-800"></div>
+                        </div>
+                        <span className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-wider ml-1">
+                          resume_raw.txt
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-mono text-zinc-500">
+                        {report.resume ? `${report.resume.split(/\s+/).length} words` : '0 words'}
+                      </span>
+                    </div>
+                    <div className="p-5 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent pr-2 select-text space-y-1">
+                      {formatResumeText(report.resume)}
+                    </div>
                   </div>
                 </div>
 
@@ -467,7 +530,7 @@ const ReportDetail = () => {
                           {dayItem.day}
                         </span>
                         
-                        <div className="bg-zinc-955 border border-zinc-800 rounded-xl p-5 space-y-4 hover:border-zinc-700 transition-colors">
+                        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 hover:border-zinc-700 transition-colors">
                           <div>
                             <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-zinc-500 select-none">Day {dayItem.day}</span>
                             <h4 className="text-sm font-bold text-zinc-150 mt-0.5">{dayItem.focus}</h4>

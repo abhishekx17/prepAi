@@ -37,7 +37,7 @@ const QUIZ_STEPS = [
 ];
 
 const Dashboard = () => {
-  const { user, handleLogout } = useAuth();
+  const { user, handleLogout, refreshUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -116,6 +116,7 @@ const Dashboard = () => {
           getReports(),
           getInterviewHistory(),
           getQuizHistory(),
+          refreshUser(),
         ]);
         setReports(reportsData.reports || []);
         setInterviews(interviewsData.history || []);
@@ -248,8 +249,10 @@ const Dashboard = () => {
     setGenerating(true);
     try {
       const data = await generateReport(jobDescription, resume, selfDescription);
-      if (data?.report?._id) navigate(`/report/${data.report._id}`);
-      else {
+      if (data?.report?._id) {
+        await refreshUser();
+        navigate(`/report/${data.report._id}`);
+      } else {
         setError('Failed to generate report.');
         setGenerating(false);
       }
@@ -267,8 +270,10 @@ const Dashboard = () => {
     setGenerating(true);
     try {
       const data = await startInterview({ jobTitle, jobDescription, resume, difficulty, focusArea });
-      if (data?.sessionId) navigate(`/interview/${data.sessionId}`);
-      else {
+      if (data?.sessionId) {
+        await refreshUser();
+        navigate(`/interview/${data.sessionId}`);
+      } else {
         setError('Failed to initialize interview session.');
         setGenerating(false);
       }
@@ -289,8 +294,10 @@ const Dashboard = () => {
     setQuizGenerating(true);
     try {
       const data = await startQuiz({ topic: quizTopic, difficulty: quizDifficulty, numQuestions: quizNumQuestions });
-      if (data?.sessionId) navigate(`/quiz/${data.sessionId}`);
-      else {
+      if (data?.sessionId) {
+        await refreshUser();
+        navigate(`/quiz/${data.sessionId}`);
+      } else {
         setError('Failed to start quiz session.');
         setQuizGenerating(false);
       }
