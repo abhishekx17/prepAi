@@ -19,6 +19,12 @@ async function authUser(req, res, next) {
   }
 
   try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        message: 'JWT_SECRET is not configured',
+      });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = decoded;

@@ -28,10 +28,17 @@ const Login = () => {
 
   // Load Google Client SDK
   useEffect(() => {
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+    if (!googleClientId) {
+      setError('Google sign-in is not configured. Add VITE_GOOGLE_CLIENT_ID in Vercel.');
+      return undefined;
+    }
+
     const renderGoogleBtn = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1035532551523-mock.apps.googleusercontent.com',
+          client_id: googleClientId,
           callback: async (response) => {
             setError('');
             const res = await handleGoogleAuth(response.credential);

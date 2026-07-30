@@ -19,6 +19,20 @@ function getCookieOptions() {
   };
 }
 
+function requireEnv(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is not configured.`);
+  }
+  return value;
+}
+
+function signAuthToken(user) {
+  return jwt.sign({ id: user._id, username: user.username }, requireEnv('JWT_SECRET'), {
+    expiresIn: '1d',
+  });
+}
+
 /**
  * Helper to generate and send/log OTP
  */
@@ -201,9 +215,7 @@ async function verifyRegisterOTPController(req, res) {
     await otpModel.deleteMany({ email });
 
     // Generate JWT cookie
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = signAuthToken(user);
 
     res.cookie('token', token, getCookieOptions());
     res.status(200).json({
@@ -294,9 +306,7 @@ async function verifyLoginOTPController(req, res) {
     await otpModel.deleteMany({ email });
 
     // Generate JWT cookie
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = signAuthToken(user);
 
     res.cookie('token', token, getCookieOptions());
     res.status(200).json({
@@ -400,8 +410,8 @@ async function googleLoginController(req, res) {
     }
 
     // Verify token audience matches our client ID (optional quotes stripped)
-    const backendClientId = (process.env.GOOGLE_CLIENT_ID || '').replace(/"/g, '').trim();
-    if (backendClientId && payload.aud !== backendClientId) {
+    const backendClientId = requireEnv('GOOGLE_CLIENT_ID').replace(/"/g, '').trim();
+    if (payload.aud !== backendClientId) {
       return res.status(400).json({ message: 'Google authentication audience mismatch.' });
     }
 
@@ -438,9 +448,7 @@ async function googleLoginController(req, res) {
     }
 
     // Generate JWT cookie
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = signAuthToken(user);
 
     res.cookie('token', token, getCookieOptions());
     res.status(200).json({
