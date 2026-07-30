@@ -139,12 +139,12 @@ const QuizDashboard = () => {
         <div className="flex flex-col overflow-y-auto flex-1">
           {/* Logo Section */}
           <div className="p-6 border-b border-[#161926] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center font-bold">
-                <Bot className="w-5 h-5 stroke-[2.5]" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-800/50 bg-sky-950/30 text-sky-400">
+                <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
               </div>
-              <span className="font-extrabold text-lg tracking-tight text-white font-mono">
-                INTERVIEW<span className="text-slate-400">.AI</span>
+              <span className="text-lg font-bold tracking-tight text-zinc-50">
+                PrepAI
               </span>
             </div>
           </div>

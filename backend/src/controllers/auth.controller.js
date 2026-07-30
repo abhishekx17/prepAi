@@ -6,6 +6,19 @@ const tokenBlackListModel = require('../models/blacklist.model');
 const nodemailer = require('nodemailer');
 
 /**
+ * Helper to get cookie options dynamically based on environment
+ */
+function getCookieOptions() {
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  };
+}
+
+/**
  * Helper to generate and send/log OTP
  */
 async function generateAndSendOTP(email) {
@@ -186,7 +199,7 @@ async function verifyRegisterOTPController(req, res) {
       expiresIn: '1d',
     });
 
-    res.cookie('token', token);
+    res.cookie('token', token, getCookieOptions());
     res.status(200).json({
       message: 'OTP verified and registered successfully',
       user: {
@@ -279,7 +292,7 @@ async function verifyLoginOTPController(req, res) {
       expiresIn: '1d',
     });
 
-    res.cookie('token', token);
+    res.cookie('token', token, getCookieOptions());
     res.status(200).json({
       message: 'Verification successful. Logged in successfully.',
       user: {
@@ -309,7 +322,7 @@ async function logoutUserController(req, res) {
     await tokenBlackListModel.create({ token });
   }
 
-  res.clearCookie('token');
+  res.clearCookie('token', getCookieOptions());
 
   res.status(200).json({
     message: 'User logged out successfully',
@@ -401,7 +414,7 @@ async function googleLoginController(req, res) {
       expiresIn: '1d',
     });
 
-    res.cookie('token', token);
+    res.cookie('token', token, getCookieOptions());
     res.status(200).json({
       message: 'Google login successful',
       user: {
