@@ -7,11 +7,29 @@ app.use(express.json());
 app.use(cookieParse());
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : ['http://localhost:5173'];
+  : [];
+
+const defaultOrigins = [
+  'http://localhost:5173',
+  'https://interview-ai-o51k.vercel.app'
+];
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+      
+      const isAllowed = allowedOrigins.includes(origin) || 
+                        defaultOrigins.includes(origin) || 
+                        origin.endsWith('.vercel.app');
+                        
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );

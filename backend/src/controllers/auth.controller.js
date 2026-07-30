@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const tokenBlackListModel = require('../models/blacklist.model');
 const nodemailer = require('nodemailer');
+const https = require('https');
 
 /**
  * Helper to get cookie options dynamically based on environment
@@ -363,13 +364,35 @@ async function googleLoginController(req, res) {
   }
 
   try {
-    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
-    
-    if (!response.ok) {
-      return res.status(400).json({ message: 'Google authentication verification failed.' });
+    let payload;
+    if (typeof fetch === 'function') {
+      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+      if (!response.ok) {
+        return res.status(400).json({ message: 'Google authentication verification failed.' });
+      }
+      payload = await response.json();
+    } else {
+      // Fallback for environments/runtimes where global fetch is not defined
+      payload = await new Promise((resolve, reject) => {
+        https.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => {
+            if (res.statusCode >= 200 && res.statusCode < 300) {
+              try {
+                resolve(JSON.parse(data));
+              } catch (err) {
+                reject(err);
+              }
+            } else {
+              reject(new Error(`Google tokeninfo API returned status ${res.statusCode}: ${data}`));
+            }
+          });
+        }).on('error', (err) => {
+          reject(err);
+        });
+      });
     }
-
-    const payload = await response.json();
 
     // Verify token audience matches our client ID (optional quotes stripped)
     const backendClientId = (process.env.GOOGLE_CLIENT_ID || '').replace(/"/g, '').trim();
