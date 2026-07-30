@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, User, Sparkles, ArrowLeft, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,7 +12,6 @@ const Register = () => {
     loading, 
     handleRegister, 
     handleVerifyRegisterOTP, 
-    handleGoogleAuth 
   } = useAuth();
 
   const [username, setUsername] = useState('');
@@ -26,70 +25,6 @@ const Register = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
-
-  // Load Google Client SDK
-  useEffect(() => {
-    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
-    if (!googleClientId) {
-      setError('Google sign-in is not configured. Add VITE_GOOGLE_CLIENT_ID in Vercel.');
-      return undefined;
-    }
-
-    const renderGoogleBtn = () => {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: async (response) => {
-            setError('');
-            const res = await handleGoogleAuth(response.credential);
-            if (res.success) navigate('/dashboard');
-            else setError(res.error);
-          },
-        });
-        const container = document.getElementById('googleSignInBtn');
-        if (container) {
-          window.google.accounts.id.renderButton(container, {
-            theme: 'outline',
-            size: 'large',
-            width: '380',
-          });
-        }
-      }
-    };
-
-    let checkInterval;
-
-    if (window.google) {
-      renderGoogleBtn();
-    } else {
-      let script = document.getElementById('google-gsi-sclient');
-      if (!script) {
-        script = document.createElement('script');
-        script.id = 'google-gsi-sclient';
-        script.src = 'https://accounts.google.com/gsi/client';
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      }
-
-      let attempts = 0;
-      checkInterval = setInterval(() => {
-        attempts++;
-        if (window.google) {
-          clearInterval(checkInterval);
-          renderGoogleBtn();
-        } else if (attempts > 50) {
-          clearInterval(checkInterval);
-          console.error('Google Sign-In SDK failed to load.');
-        }
-      }, 100);
-    }
-
-    return () => {
-      if (checkInterval) clearInterval(checkInterval);
-    };
-  }, [otpSent]);
 
   const handleSubmitCredentials = async (e) => {
     e.preventDefault();
@@ -303,17 +238,6 @@ const Register = () => {
                   </button>
                 </form>
 
-                {/* Social Sign-in Divider */}
-                <div className="flex items-center justify-center gap-3 select-none">
-                  <div className="h-px flex-1 bg-slate-200 dark:bg-zinc-800/80" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
-                    Or continue with
-                  </span>
-                  <div className="h-px flex-1 bg-slate-200 dark:bg-zinc-800/80" />
-                </div>
-
-                {/* Google Button Wrapper */}
-                <div id="googleSignInBtn" className="w-full flex justify-center" />
               </motion.div>
             ) : (
               <motion.form

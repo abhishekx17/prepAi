@@ -19,17 +19,10 @@ authRouter.post('/verify-register-otp', authController.verifyRegisterOTPControll
 
 /**
  * @route POST /api/auth/login
- * @description Verifies password, then triggers OTP code sent to user email
+ * @description Verifies password and logs the user in
  * @access Public
  */
 authRouter.post('/login', authController.loginUserController);
-
-/**
- * @route POST /api/auth/verify-login-otp
- * @description Confirms OTP for credentials login and logs in
- * @access Public
- */
-authRouter.post('/verify-login-otp', authController.verifyLoginOTPController);
 
 /**
  * @route GET /api/auth/logout
@@ -44,12 +37,5 @@ authRouter.get('/logout', authController.logoutUserController);
  * @access Private
  */
 authRouter.get('/get-me', authMiddleware.authUser, authController.getMeController);
-
-/**
- * @route POST /api/auth/google
- * @description Direct login or register user with Google OAuth credentials
- * @access Public
- */
-authRouter.post('/google', authController.googleLoginController);
 
 module.exports = authRouter;

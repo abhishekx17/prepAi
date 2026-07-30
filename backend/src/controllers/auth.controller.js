@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const tokenBlackListModel = require('../models/blacklist.model');
 const nodemailer = require('nodemailer');
-const https = require('https');
 
 /**
  * Helper to get cookie options dynamically based on environment
@@ -31,6 +30,20 @@ function signAuthToken(user) {
   return jwt.sign({ id: user._id, username: user.username }, requireEnv('JWT_SECRET'), {
     expiresIn: '1d',
   });
+}
+
+function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+function getSafeUser(user) {
+  return {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    tier: user.tier || 'Free',
+    usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
+  };
 }
 
 /**
@@ -123,7 +136,9 @@ OTP Code: ${otp}
  * @access Public
  */
 async function registerUserController(req, res) {
-  const { username, email, password } = req.body;
+  const username = String(req.body.username || '').trim();
+  const email = normalizeEmail(req.body.email);
+  const { password } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({
@@ -189,7 +204,8 @@ async function registerUserController(req, res) {
  * @access Public
  */
 async function verifyRegisterOTPController(req, res) {
-  const { email, otp } = req.body;
+  const email = normalizeEmail(req.body.email);
+  const { otp } = req.body;
 
   if (!email || !otp) {
     return res.status(400).json({ message: 'Email and OTP verification code are required.' });
@@ -220,13 +236,7 @@ async function verifyRegisterOTPController(req, res) {
     res.cookie('token', token, getCookieOptions());
     res.status(200).json({
       message: 'OTP verified and registered successfully',
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        tier: user.tier || 'Free',
-        usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
-      },
+      user: getSafeUser(user),
     });
   } catch (error) {
     console.error('Registration OTP verification failed:', error);
@@ -237,11 +247,12 @@ async function verifyRegisterOTPController(req, res) {
 /**
  * @name loginUserController
  * @route POST /api/auth/login
- * @description Verifies password, then triggers OTP code sent to user email.
+ * @description Verifies password and issues session cookie.
  * @access Public
  */
 async function loginUserController(req, res) {
-  const { email, password } = req.body;
+  const email = normalizeEmail(req.body.email);
+  const { password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
@@ -264,64 +275,16 @@ async function loginUserController(req, res) {
       });
     }
 
-    // Trigger email verification OTP
-    await generateAndSendOTP(email);
-
-    res.status(200).json({
-      otpSent: true,
-      message: 'Verification code sent to your email.',
-    });
-  } catch (error) {
-    console.error('Login credentials check failed:', error);
-    res.status(500).json({ message: 'An error occurred during login.' });
-  }
-}
-
-/**
- * @name verifyLoginOTPController
- * @route POST /api/auth/verify-login-otp
- * @description Confirms OTP from DB for credentials login, then issues session cookie
- * @access Public
- */
-async function verifyLoginOTPController(req, res) {
-  const { email, otp } = req.body;
-
-  if (!email || !otp) {
-    return res.status(400).json({ message: 'Email and OTP verification code are required.' });
-  }
-
-  try {
-    const verifiedOTP = await otpModel.findOne({ email, otp });
-
-    if (!verifiedOTP) {
-      return res.status(400).json({ message: 'Invalid or expired verification code.' });
-    }
-
-    const user = await userModel.findOne({ email, isVerified: true });
-    if (!user) {
-      return res.status(404).json({ message: 'Account not found or unverified.' });
-    }
-
-    // Clean up OTP codes
-    await otpModel.deleteMany({ email });
-
-    // Generate JWT cookie
     const token = signAuthToken(user);
 
     res.cookie('token', token, getCookieOptions());
     res.status(200).json({
-      message: 'Verification successful. Logged in successfully.',
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        tier: user.tier || 'Free',
-        usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
-      },
+      message: 'Logged in successfully.',
+      user: getSafeUser(user),
     });
   } catch (error) {
-    console.error('Login OTP verification failed:', error);
-    res.status(500).json({ message: 'Verification error occurred.' });
+    console.error('Login credentials check failed:', error);
+    res.status(500).json({ message: 'An error occurred during login.' });
   }
 }
 
@@ -355,124 +318,14 @@ async function getMeController(req, res) {
   const user = await userModel.findById(req.user.id);
 
   res.status(200).json({
-    user: {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      tier: user.tier || 'Free',
-      usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
-    },
+    user: getSafeUser(user),
   });
-}
-
-/**
- * @name googleLoginController
- * @route POST /api/auth/google
- * @description Direct sign-in/up for Google accounts (marked as isVerified: true immediately)
- * @access Public
- */
-async function googleLoginController(req, res) {
-  const { credential } = req.body;
-
-  if (!credential) {
-    return res.status(400).json({ message: 'Google credential token is required.' });
-  }
-
-  try {
-    let payload;
-    if (typeof fetch === 'function') {
-      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
-      if (!response.ok) {
-        return res.status(400).json({ message: 'Google authentication verification failed.' });
-      }
-      payload = await response.json();
-    } else {
-      // Fallback for environments/runtimes where global fetch is not defined
-      payload = await new Promise((resolve, reject) => {
-        https.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`, (res) => {
-          let data = '';
-          res.on('data', (chunk) => { data += chunk; });
-          res.on('end', () => {
-            if (res.statusCode >= 200 && res.statusCode < 300) {
-              try {
-                resolve(JSON.parse(data));
-              } catch (err) {
-                reject(err);
-              }
-            } else {
-              reject(new Error(`Google tokeninfo API returned status ${res.statusCode}: ${data}`));
-            }
-          });
-        }).on('error', (err) => {
-          reject(err);
-        });
-      });
-    }
-
-    // Verify token audience matches our client ID (optional quotes stripped)
-    const backendClientId = requireEnv('GOOGLE_CLIENT_ID').replace(/"/g, '').trim();
-    if (payload.aud !== backendClientId) {
-      return res.status(400).json({ message: 'Google authentication audience mismatch.' });
-    }
-
-    if (!payload.email) {
-      return res.status(400).json({ message: 'No email scope associated with Google token.' });
-    }
-
-    const email = payload.email;
-
-    // Check if account already exists
-    let user = await userModel.findOne({ email });
-
-    if (!user) {
-      // Register verified user with Google details
-      let baseUsername = (payload.name || email.split('@')[0]).replace(/\s+/g, '').toLowerCase();
-      let username = baseUsername + Math.floor(1000 + Math.random() * 9000);
-      let isUsernameExist = await userModel.findOne({ username });
-      while (isUsernameExist) {
-        username = baseUsername + Math.floor(1000 + Math.random() * 9000);
-        isUsernameExist = await userModel.findOne({ username });
-      }
-
-      const dummyPassword = await bcrypt.hash(Math.random().toString(36), 10);
-      user = await userModel.create({
-        username,
-        email,
-        password: dummyPassword,
-        isVerified: true, // Google already verified their email address
-      });
-    } else if (!user.isVerified) {
-      // If user was previously unverified in database, activate them immediately
-      user.isVerified = true;
-      await user.save();
-    }
-
-    // Generate JWT cookie
-    const token = signAuthToken(user);
-
-    res.cookie('token', token, getCookieOptions());
-    res.status(200).json({
-      message: 'Google login successful',
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        tier: user.tier || 'Free',
-        usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
-      },
-    });
-  } catch (error) {
-    console.error('Google Auth Controller Error:', error);
-    res.status(500).json({ message: 'An error occurred during Google authentication.' });
-  }
 }
 
 module.exports = {
   registerUserController,
   verifyRegisterOTPController,
   loginUserController,
-  verifyLoginOTPController,
   logoutUserController,
   getMeController,
-  googleLoginController,
 };
