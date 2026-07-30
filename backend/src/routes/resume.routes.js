@@ -2,18 +2,7 @@ const { Router } = require('express');
 const resumeRouter = Router();
 const multer = require('multer');
 
-// Polyfill missing browser globals for pdf-parse compatibility in Node/Vercel serverless environments
-if (typeof global.DOMMatrix === 'undefined') {
-  global.DOMMatrix = class DOMMatrix {};
-}
-if (typeof global.ImageData === 'undefined') {
-  global.ImageData = class ImageData {};
-}
-if (typeof global.Path2D === 'undefined') {
-  global.Path2D = class Path2D {};
-}
-
-const { PDFParse } = require('pdf-parse');
+const pdf = require('pdf-parse');
 
 // Configure multer in-memory storage
 const upload = multer({
@@ -42,11 +31,8 @@ resumeRouter.post('/upload', upload.single('resume'), async (req, res) => {
     let extractedText = '';
 
     if (mimeType === 'application/pdf' || originalName.endsWith('.pdf')) {
-      // Use the PDFParse constructor and methods from the new pdf-parse library
-      const parser = new PDFParse({ data: req.file.buffer });
-      const textResult = await parser.getText();
-      extractedText = textResult.text || '';
-      await parser.destroy();
+      const data = await pdf(req.file.buffer);
+      extractedText = data.text || '';
     } else if (mimeType === 'text/plain' || originalName.endsWith('.txt')) {
       // Parse TXT
       extractedText = req.file.buffer.toString('utf-8');
