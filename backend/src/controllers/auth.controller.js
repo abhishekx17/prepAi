@@ -193,6 +193,8 @@ async function verifyRegisterOTPController(req, res) {
         id: user._id,
         username: user.username,
         email: user.email,
+        tier: user.tier || 'Free',
+        usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
       },
     });
   } catch (error) {
@@ -284,6 +286,8 @@ async function verifyLoginOTPController(req, res) {
         id: user._id,
         username: user.username,
         email: user.email,
+        tier: user.tier || 'Free',
+        usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
       },
     });
   } catch (error) {
@@ -326,6 +330,8 @@ async function getMeController(req, res) {
       id: user._id,
       username: user.username,
       email: user.email,
+      tier: user.tier || 'Free',
+      usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
     },
   });
 }
@@ -402,6 +408,8 @@ async function googleLoginController(req, res) {
         id: user._id,
         username: user.username,
         email: user.email,
+        tier: user.tier || 'Free',
+        usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
       },
     });
   } catch (error) {

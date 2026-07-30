@@ -117,7 +117,7 @@ Requirements:
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash-lite',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -170,7 +170,7 @@ Evaluate the candidate's performance thoroughly. Provide:
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash-lite',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -205,7 +205,7 @@ Candidate's Current Code Answer: ${userCodeSoFar || 'Empty'}
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3.5-flash-lite',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
