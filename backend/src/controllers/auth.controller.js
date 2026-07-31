@@ -27,7 +27,7 @@ function requireEnv(name) {
 }
 
 function signAuthToken(user) {
-  return jwt.sign({ id: user._id, username: user.username }, requireEnv('JWT_SECRET'), {
+  return jwt.sign({ id: user._id, username: user.username, role: user.role || 'user' }, requireEnv('JWT_SECRET'), {
     expiresIn: '1d',
   });
 }
@@ -43,6 +43,7 @@ function getSafeUser(user) {
     email: user.email,
     tier: user.tier || 'Free',
     usage: user.usage || { resumesAnalyzed: 0, interviewsStarted: 0, quizzesTaken: 0 },
+    role: user.role || 'user',
   };
 }
 
@@ -322,10 +323,164 @@ async function getMeController(req, res) {
   });
 }
 
+/**
+ * @name forgotPasswordController
+ * @route POST /api/auth/forgot-password
+ * @description Generates a reset OTP and sends it via email
+ * @access Public
+ */
+async function forgotPasswordController(req, res) {
+  const email = normalizeEmail(req.body.email);
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email address is required.' });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'No account found with this email address.' });
+    }
+
+    // Generate reset OTP code (6 digits)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Remove any existing OTP codes for this email
+    await otpModel.deleteMany({ email });
+    
+    // Create new OTP entry
+    await otpModel.create({ email, otp });
+
+    // Print OTP code in console for development/testing
+    console.log(`
+================================================
+[PREPAI PASSWORD RESET OTP CODE]
+To: ${email}
+Subject: PrepAI Password Reset OTP Code
+OTP Code: ${otp}
+================================================
+    `);
+
+    // SMTP Configuration logic
+    const cleanEnvVal = (val) => {
+      if (!val) return '';
+      return val.replace(/"/g, '').replace(/'/g, '').trim();
+    };
+
+    const user_email = cleanEnvVal(process.env.SMTP_USER || process.env.EMAIL_USER);
+    const user_pass = cleanEnvVal(process.env.SMTP_PASS || process.env.EMAIL_PASS);
+    const host = cleanEnvVal(process.env.SMTP_HOST) || 'smtp.gmail.com';
+    const port = parseInt(cleanEnvVal(process.env.SMTP_PORT) || '587', 10);
+
+    if (user_email && user_pass) {
+      try {
+        let transporterOpts = {};
+        if (host.includes('gmail.com')) {
+          transporterOpts = {
+            service: 'gmail',
+            auth: {
+              user: user_email,
+              pass: user_pass,
+            },
+          };
+        } else {
+          transporterOpts = {
+            host: host,
+            port: port,
+            secure: port === 465,
+            auth: {
+              user: user_email,
+              pass: user_pass,
+            },
+          };
+        }
+
+        transporterOpts.connectionTimeout = 3000;
+        transporterOpts.greetingTimeout = 3000;
+        transporterOpts.socketTimeout = 3000;
+
+        const transporter = nodemailer.createTransport(transporterOpts);
+
+        await transporter.sendMail({
+          from: `"PrepAI Password Reset" <${user_email}>`,
+          to: email,
+          subject: 'PrepAI Password Reset OTP Code',
+          text: `Your password reset OTP code is: ${otp}. It will expire in 5 minutes.`,
+          html: `
+            <div style="font-family: sans-serif; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px; max-width: 480px; margin: 0 auto; background-color: #ffffff;">
+              <h2 style="color: #6366f1; margin-top: 0;">Password Reset Verification</h2>
+              <p style="font-size: 14px; color: #334155; line-height: 1.5;">You requested to reset your password. Use the following OTP code to verify this request:</p>
+              <div style="font-size: 28px; font-weight: 800; letter-spacing: 4px; color: #0f172a; background-color: #f8fafc; padding: 12px; border-radius: 8px; text-align: center; margin: 18px 0; border: 1px solid #e2e8f0;">
+                ${otp}
+              </div>
+              <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin-bottom: 0;">This code is valid for 5 minutes. If you did not request this, you can ignore this email safely.</p>
+            </div>
+          `,
+        });
+      } catch (mailErr) {
+        console.error('SMTP sending failed, fallback to console log:', mailErr);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset OTP code sent successfully.',
+    });
+  } catch (error) {
+    console.error('Forgot password failed:', error);
+    res.status(500).json({ message: 'Error processing forgot password request.' });
+  }
+}
+
+/**
+ * @name resetPasswordController
+ * @route POST /api/auth/reset-password
+ * @description Verifies OTP and updates the user's password
+ * @access Public
+ */
+async function resetPasswordController(req, res) {
+  const email = normalizeEmail(req.body.email);
+  const { otp, newPassword } = req.body;
+
+  if (!email || !otp || !newPassword) {
+    return res.status(400).json({ message: 'Email, OTP and new password are required.' });
+  }
+
+  try {
+    const verifiedOTP = await otpModel.findOne({ email, otp });
+    if (!verifiedOTP) {
+      return res.status(400).json({ message: 'Invalid or expired OTP verification code.' });
+    }
+
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User account not found.' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    // Clean up OTP entries
+    await otpModel.deleteMany({ email });
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully. You can now log in.',
+    });
+  } catch (error) {
+    console.error('Reset password check failed:', error);
+    res.status(500).json({ message: 'Error resetting password.' });
+  }
+}
+
 module.exports = {
   registerUserController,
   verifyRegisterOTPController,
   loginUserController,
   logoutUserController,
   getMeController,
+  forgotPasswordController,
+  resetPasswordController,
 };

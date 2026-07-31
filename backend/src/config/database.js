@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const seedAdmin = require('./seedAdmin');
 
 mongoose.set('bufferCommands', false);
 
@@ -25,6 +26,10 @@ async function connectToDb() {
 
     cachedConnection = await cachedConnectionPromise;
     console.log('connected to db');
+    
+    // Automatically seed/sync admin account from env variables
+    seedAdmin();
+
     return cachedConnection;
   } catch (error) {
     cachedConnectionPromise = null;

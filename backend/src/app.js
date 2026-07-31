@@ -12,6 +12,7 @@ const allowedOrigins = process.env.FRONTEND_URL
 
 const defaultOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
   'https://prep-ai-pied-eta.vercel.app',
   'https://interview-ai-o51k.vercel.app',
 ];
@@ -44,6 +45,7 @@ const reportRouter = require('./routes/report.routes');
 const interviewRouter = require('./routes/interview.routes');
 const resumeRouter = require('./routes/resume.routes');
 const quizRouter = require('./routes/quiz.routes');
+const adminRouter = require('./routes/admin.routes');
 const authMiddleware = require('./middlewares/auth.middleware');
 const connectToDb = require('./config/database');
 
@@ -77,5 +79,6 @@ app.use('/api/reports', authMiddleware.authUser, reportRouter);
 app.use('/api/interviews', authMiddleware.authUser, interviewRouter);
 app.use('/api/resume', authMiddleware.authUser, resumeRouter);
 app.use('/api/quizzes', authMiddleware.authUser, quizRouter);
+app.use('/api/admin', adminRouter);
 
 module.exports = app;

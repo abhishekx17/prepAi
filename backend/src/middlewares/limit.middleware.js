@@ -33,6 +33,12 @@ const checkUsageLimit = (actionType) => {
         return res.status(404).json({ message: 'User not found.' });
       }
 
+      // Admin has absolute bypass on all resource checks
+      if (user.role === 'admin') {
+        req.userDoc = user;
+        return next();
+      }
+
       // Initialize usage counters if missing
       const tier = user.tier || 'Free';
       if (!user.usage) {

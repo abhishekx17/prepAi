@@ -36,4 +36,29 @@ async function authUser(req, res, next) {
   }
 }
 
-module.exports = { authUser };
+const userModel = require('../models/user.model');
+
+async function authAdmin(req, res, next) {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({
+      message: 'Unauthorized: authentication required',
+    });
+  }
+
+  try {
+    const user = await userModel.findById(req.user.id);
+    if (!user || user.email !== 'abhishek.0x17@gmail.com') {
+      return res.status(403).json({
+        message: 'Forbidden: Admin access restricted to the official administrator email.',
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Server error verifying admin status',
+      error: error.message,
+    });
+  }
+}
+
+module.exports = { authUser, authAdmin };
