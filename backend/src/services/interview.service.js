@@ -1,144 +1,96 @@
-const { GoogleGenAI } = require('@google/genai');
+const Groq = require('groq-sdk');
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
-// JSON Schema for generated questions
-const questionsSchema = {
-  type: 'OBJECT',
-  properties: {
-    questions: {
-      type: 'ARRAY',
-      description: 'List of exactly 4 generated interview questions tailored to the candidate',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          question: { type: 'STRING', description: 'The interview question text' },
-          type: { 
-            type: 'STRING', 
-            enum: ['coding', 'conceptual', 'behavioral'],
-            description: 'The type of question' 
-          },
-          codeTemplate: { 
-            type: 'STRING', 
-            description: 'For coding questions, a starter code function signature or template. Blank for others.' 
-          },
-        },
-        required: ['question', 'type'],
-      },
-    },
-  },
-  required: ['questions'],
-};
-
-// JSON Schema for interview evaluation
-const evaluationSchema = {
-  type: 'OBJECT',
-  properties: {
-    score: { 
-      type: 'INTEGER', 
-      description: 'Overall score between 0 and 100 for the interview performance' 
-    },
-    recommendation: { 
-      type: 'STRING', 
-      enum: ['Strong Hire', 'Hire', 'Weak Hire', 'No Hire'],
-      description: 'Overall hire recommendation' 
-    },
-    feedbackSummary: { 
-      type: 'STRING', 
-      description: 'Summary of the candidate performance, strengths and areas to work on' 
-    },
-    individualFeedback: {
-      type: 'ARRAY',
-      description: 'Feedback corresponding to each individual question',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          questionIndex: { type: 'INTEGER', description: 'Index of the question (0-based)' },
-          score: { type: 'INTEGER', description: 'Score between 0 and 100 for this specific answer' },
-          feedback: { 
-            type: 'STRING', 
-            description: 'Detailed constructive feedback including what was good, what was missing, and code complexity/behavioral evaluation' 
-          },
-        },
-        required: ['questionIndex', 'score', 'feedback'],
-      },
-    },
-    roadmap: {
-      type: 'ARRAY',
-      description: 'Personalized action plan/roadmap for candidate improvement',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          topic: { type: 'STRING', description: 'Topic or skill area the candidate needs to practice' },
-          suggestion: { type: 'STRING', description: 'Specific steps, exercises or resources to improve in this area' },
-        },
-        required: ['topic', 'suggestion'],
-      },
-    },
-  },
-  required: ['score', 'recommendation', 'feedbackSummary', 'individualFeedback', 'roadmap'],
-};
-
-// JSON Schema for hint generation
-const hintSchema = {
-  type: 'OBJECT',
-  properties: {
-    hint: { 
-      type: 'STRING', 
-      description: 'A helpful, supportive hint pointing the candidate in the right direction without writing the code for them.' 
-    },
-  },
-  required: ['hint'],
-};
+const MODEL_70B = 'llama-3.3-70b-versatile';
+const MODEL_8B = 'llama-3.1-8b-instant';
 
 /**
- * Generates 4 custom questions (including coding questions) tailored to the JD, resume, difficulty, and focus area.
+ * Helper: Call Groq chat completions with JSON mode enforced.
  */
-async function generateInterviewQuestions({ jobTitle, jobDescription, resume, difficulty, focusArea }) {
-  const prompt = `You are a professional technical recruiter and engineering interviewer.
-Generate exactly 4 high-quality interview questions for a candidate interviewing for the role of: "${jobTitle}".
-
-Context:
-- Target Job Description: ${jobDescription}
-- Candidate Resume: ${resume || 'No resume provided.'}
-- Interview Difficulty Level: ${difficulty || 'Mid'}
-- Focus Area: ${focusArea || 'Coding Heavy'}
-
-Requirements:
-1. Generate exactly 4 questions.
-2. For "Coding Heavy", generate at least 2 coding questions (type: "coding") and 2 conceptual/behavioral questions.
-3. For "System Design", generate at least 1 design question (type: "conceptual") and others.
-4. For coding questions, provide a realistic Javascript coding starter template or signature inside 'codeTemplate' (e.g. "function solve(...) {\n  // Write code here\n}").
-5. Customize questions based on candidate resume and job requirements (e.g. if they know Node.js and Mongoose, ask questions that require database or server understanding).
-6. Ensure the questions match the chosen difficulty: ${difficulty}.
-`;
-
+async function callGroq(systemPrompt, userPrompt, model = MODEL_70B) {
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash-lite',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: questionsSchema,
-      },
+    const response = await groq.chat.completions.create({
+      model: model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userPrompt },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
     });
 
-    if (!response.text) {
-      throw new Error("No response text received from Gemini API for question generation");
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No content received from Groq API');
     }
-
-    const data = JSON.parse(response.text);
-    return data.questions || [];
+    return JSON.parse(content);
   } catch (error) {
-    console.error("Error in generateInterviewQuestions service:", error);
+    // If the 8B model is blocked, immediately fall back to the 70B model
+    if (model === MODEL_8B && (error.status === 403 || error.message.includes('blocked'))) {
+      console.warn(`⚠️ Groq model ${MODEL_8B} is blocked. Falling back to ${MODEL_70B} for hint generation...`);
+      return callGroq(systemPrompt, userPrompt, MODEL_70B);
+    }
     throw error;
   }
 }
 
+// ─────────────────────────────────────────────
+// GENERATE INTERVIEW QUESTIONS
+// ─────────────────────────────────────────────
+
 /**
- * Evaluates the full interview answers and solutions.
+ * Generates 4 custom questions tailored to the JD, resume, difficulty, and focus area.
+ * Returns: Array of { question, type, codeTemplate }
+ */
+async function generateInterviewQuestions({ jobTitle, jobDescription, resume, difficulty, focusArea }) {
+  const systemPrompt = `You are a professional technical recruiter and senior engineering interviewer.
+Generate exactly 4 high-quality interview questions for the given role.
+
+You MUST respond with a valid JSON object in EXACTLY this format:
+{
+  "questions": [
+    {
+      "question": "string — the interview question text",
+      "type": "coding" | "conceptual" | "behavioral",
+      "codeTemplate": "string — for coding questions, a JavaScript starter template like 'function solve(...) {\\n  // Write your code here\\n}'. Leave empty string for non-coding questions."
+    }
+  ]
+}
+
+Rules:
+- Generate EXACTLY 4 questions total.
+- For "Coding Heavy" focus: at least 2 must be type "coding", rest "conceptual" or "behavioral".
+- For "System Design" focus: at least 1 must be type "conceptual" (system design), rest mixed.
+- For "Behavioral" focus: at least 2 must be type "behavioral", rest mixed.
+- For coding questions, always provide a realistic JavaScript function signature as codeTemplate.
+- Tailor questions specifically to the candidate's resume skills and the job requirements.
+- Match difficulty level: Junior = simpler concepts, Mid = standard, Senior = advanced/architecture.`;
+
+  const userPrompt = `Job Title: ${jobTitle}
+Job Description: ${jobDescription}
+Candidate Resume: ${resume || 'No resume provided.'}
+Difficulty Level: ${difficulty || 'Mid'}
+Focus Area: ${focusArea || 'Coding Heavy'}`;
+
+  try {
+    const data = await callGroq(systemPrompt, userPrompt);
+    return data.questions || [];
+  } catch (error) {
+    console.error('Error in generateInterviewQuestions service:', error);
+    throw error;
+  }
+}
+
+// ─────────────────────────────────────────────
+// EVALUATE INTERVIEW SESSION
+// ─────────────────────────────────────────────
+
+/**
+ * Evaluates all answers from a completed interview session.
+ * Returns: { score, recommendation, feedbackSummary, individualFeedback, roadmap }
  */
 async function evaluateInterviewSession({ jobTitle, jobDescription, resume, questions }) {
   const formattedAnswers = questions.map((q, idx) => {
@@ -146,82 +98,78 @@ async function evaluateInterviewSession({ jobTitle, jobDescription, resume, ques
 Question: ${q.question}
 Candidate Text Answer: ${q.userAnswer || 'No text answer provided.'}
 Candidate Code Answer: ${q.type === 'coding' ? (q.userCode || 'No code provided.') : 'N/A'}
-Hints used: ${q.hintsUsed && q.hintsUsed.length > 0 ? q.hintsUsed.join('; ') : 'None'}
-`;
+Hints used: ${q.hintsUsed && q.hintsUsed.length > 0 ? q.hintsUsed.join('; ') : 'None'}`;
   }).join('\n\n');
 
-  const prompt = `You are a senior principal engineer conducting a post-interview debrief. 
-Review the candidate's responses for the role: "${jobTitle}".
+  const systemPrompt = `You are a senior principal engineer conducting a post-interview debrief.
+Evaluate the candidate's performance fairly and thoroughly.
 
-Context:
-- Job Description: ${jobDescription}
-- Candidate Resume: ${resume || 'No resume provided.'}
+You MUST respond with a valid JSON object in EXACTLY this format:
+{
+  "score": number — overall score integer 0–100,
+  "recommendation": "Strong Hire" | "Hire" | "Weak Hire" | "No Hire",
+  "feedbackSummary": "string — 2-3 sentences summarizing key strengths and main areas for improvement",
+  "individualFeedback": [
+    {
+      "questionIndex": number — 0-based index matching the question order,
+      "score": number — integer 0–100 for this specific answer,
+      "feedback": "string — detailed constructive feedback: what was correct, what was missing, code complexity/cleanliness for coding questions, hint penalty if applicable"
+    }
+  ],
+  "roadmap": [
+    {
+      "topic": "string — specific topic or skill to improve",
+      "suggestion": "string — concrete action steps, resources, or exercises to improve in this area"
+    }
+  ]
+}
 
-Interview Session details:
-${formattedAnswers}
+Be honest but constructive. Factor in hint usage (heavy hint reliance should lower score). Provide actionable roadmap items (3-5 items).`;
 
-Evaluate the candidate's performance thoroughly. Provide:
-1. An overall score (0-100).
-2. A definitive hire recommendation.
-3. A feedback summary listing key strengths and gaps.
-4. Individual score and constructive feedback for each answer, analyzing the correctness, complexity (Time/Space for code), and code cleanliness. Take into account if they relied heavily on hints.
-5. An actionable, customized learning roadmap containing specific topics and study actions.
-`;
+  const userPrompt = `Role: ${jobTitle}
+Job Description: ${jobDescription}
+Candidate Resume: ${resume || 'No resume provided.'}
+
+Interview Answers:
+${formattedAnswers}`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash-lite',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: evaluationSchema,
-      },
-    });
-
-    if (!response.text) {
-      throw new Error("No response text received from Gemini API for interview evaluation");
-    }
-
-    return JSON.parse(response.text);
+    return await callGroq(systemPrompt, userPrompt);
   } catch (error) {
-    console.error("Error in evaluateInterviewSession service:", error);
+    console.error('Error in evaluateInterviewSession service:', error);
     throw error;
   }
 }
 
+// ─────────────────────────────────────────────
+// GENERATE HINT
+// ─────────────────────────────────────────────
+
 /**
- * Generates a helpful hint for a specific question given what the candidate has written so far.
+ * Generates a helpful hint for the current question without giving away the answer.
+ * Returns: string (the hint text)
  */
 async function generateHint({ question, codeTemplate, userAnswerSoFar, userCodeSoFar }) {
-  const prompt = `The candidate is in a live mock interview and is stuck on a question. 
-Provide a single helpful, encouraging hint. 
-Do NOT give the full code solution or answer. Instead, give a tip, outline an edge case to check, or explain a key concept that will guide them.
+  const systemPrompt = `You are a supportive mock interview coach helping a candidate who is stuck.
+Provide ONE helpful, encouraging hint that nudges them in the right direction WITHOUT writing the code or giving the full answer.
 
-Question: ${question}
-${codeTemplate ? `Starter Code Template: ${codeTemplate}` : ''}
-Candidate's Current Text Answer: ${userAnswerSoFar || 'Empty'}
-Candidate's Current Code Answer: ${userCodeSoFar || 'Empty'}
-`;
+You MUST respond with a valid JSON object in EXACTLY this format:
+{
+  "hint": "string — a single, concise, helpful hint (1-3 sentences). Point to a concept, edge case, or approach — never the full solution."
+}`;
+
+  const userPrompt = `Interview Question: ${question}
+${codeTemplate ? `Starter Code Template:\n${codeTemplate}` : ''}
+
+Candidate's Current Text Answer: ${userAnswerSoFar || 'Empty — they haven\'t started.'}
+Candidate's Current Code: ${userCodeSoFar || 'Empty — no code written yet.'}`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash-lite',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: hintSchema,
-      },
-    });
-
-    if (!response.text) {
-      throw new Error("No response text received from Gemini API for hint generation");
-    }
-
-    const data = JSON.parse(response.text);
-    return data.hint || "Try breaking the problem down and writing pseudo-code first.";
+    const data = await callGroq(systemPrompt, userPrompt, MODEL_8B);
+    return data.hint || 'Try breaking the problem into smaller steps and think about the input/output first.';
   } catch (error) {
-    console.error("Error in generateHint service:", error);
-    return "Think about the input data structure and if there is a helper method you can use.";
+    console.error('Error in generateHint service:', error);
+    return 'Think about what data structure would make this problem easier to solve.';
   }
 }
 

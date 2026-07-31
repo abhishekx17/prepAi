@@ -81,4 +81,21 @@ app.use('/api/resume', authMiddleware.authUser, resumeRouter);
 app.use('/api/quizzes', authMiddleware.authUser, quizRouter);
 app.use('/api/admin', adminRouter);
 
+// Global Error Handler and Logger
+app.use((err, req, res, next) => {
+  const fs = require('fs');
+  const path = require('path');
+  const logMessage = `\n[${new Date().toISOString()}] ERROR: ${err.message}\n${err.stack}\n`;
+  console.error(logMessage);
+  try {
+    fs.appendFileSync(path.join(__dirname, '../error.log'), logMessage, 'utf-8');
+  } catch (e) {
+    console.error('Failed to write to error.log:', e.message);
+  }
+  res.status(500).json({
+    message: 'An internal server error occurred.',
+    error: err.message
+  });
+});
+
 module.exports = app;

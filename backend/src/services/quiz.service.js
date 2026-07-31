@@ -1,77 +1,85 @@
-const { GoogleGenAI } = require('@google/genai');
+const Groq = require('groq-sdk');
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
-// JSON Schema for Quiz Questions
-const quizQuestionsSchema = {
-  type: 'OBJECT',
-  properties: {
-    questions: {
-      type: 'ARRAY',
-      description: 'List of generated multiple choice quiz questions',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          question: { type: 'STRING', description: 'The objective question text' },
-          options: {
-            type: 'ARRAY',
-            items: { type: 'STRING' },
-            description: 'Exactly 4 options representing possible answers',
-          },
-          correctOptionIndex: {
-            type: 'INTEGER',
-            description: 'The 0-based index (0 to 3) of the correct option',
-          },
-          explanation: {
-            type: 'STRING',
-            description: 'Detailed explanation of why this option is correct',
-          },
-        },
-        required: ['question', 'options', 'correctOptionIndex', 'explanation'],
-      },
-    },
-  },
-  required: ['questions'],
-};
+const MODEL = 'llama-3.1-8b-instant';
+const FALLBACK_MODEL = 'llama-3.3-70b-versatile';
 
 /**
- * Generates custom multiple-choice questions for the specified topic, difficulty, and quantity.
+ * Helper: Call Groq chat completions with JSON mode enforced.
+ */
+async function callGroq(systemPrompt, userPrompt, modelName = MODEL) {
+  try {
+    const response = await groq.chat.completions.create({
+      model: modelName,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userPrompt },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.6,
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No content received from Groq API');
+    }
+    return JSON.parse(content);
+  } catch (error) {
+    // If blocked or permissions issue, try the fallback model
+    if (modelName === MODEL && (error.status === 403 || error.message.includes('blocked'))) {
+      console.warn(`⚠️ Groq model ${MODEL} is blocked. Falling back to ${FALLBACK_MODEL}...`);
+      return callGroq(systemPrompt, userPrompt, FALLBACK_MODEL);
+    }
+    throw error;
+  }
+}
+
+// ─────────────────────────────────────────────
+// GENERATE QUIZ QUESTIONS
+// ─────────────────────────────────────────────
+
+/**
+ * Generates multiple-choice quiz questions for the specified topic, difficulty, and count.
+ * Returns: Array of { question, options, correctOptionIndex, explanation }
  */
 async function generateQuizQuestions({ topic, difficulty, numQuestions }) {
   const count = parseInt(numQuestions) || 5;
 
-  const prompt = `You are a technical educator and test creator. 
-Generate exactly ${count} multiple choice quiz questions on the technical topic: "${topic}".
+  const systemPrompt = `You are a technical educator and expert quiz creator.
+Generate multiple-choice questions that test genuine understanding, not just memorization.
 
-Context & Requirements:
-1. Target Topic: "${topic}"
-2. Difficulty Level: ${difficulty || 'Mid'} (Low corresponds to Junior, Mid to Intermediate, High to Advanced/Staff)
-3. Quantity: Exactly ${count} questions.
-4. Each question must have exactly 4 clear options.
-5. Provide a detailed educational explanation why the correct option is the right answer.
-6. The correctOptionIndex must be a valid 0-based index (0, 1, 2, or 3).
-`;
+You MUST respond with a valid JSON object in EXACTLY this format:
+{
+  "questions": [
+    {
+      "question": "string — a clear, concise question",
+      "options": ["string — option A", "string — option B", "string — option C", "string — option D"],
+      "correctOptionIndex": number — 0-based index of the correct option (0, 1, 2, or 3),
+      "explanation": "string — a detailed educational explanation of WHY the correct option is right and why the others are wrong"
+    }
+  ]
+}
+
+Rules:
+- Generate EXACTLY ${count} questions.
+- Each question MUST have exactly 4 options in the "options" array.
+- correctOptionIndex MUST be 0, 1, 2, or 3.
+- Vary the position of the correct answer across questions (don't always put it at index 0 or 1).
+- Match difficulty: Low = fundamental concepts, Mid = intermediate understanding, High = advanced/edge cases.
+- Make all 4 options plausible — avoid obviously wrong distractors.`;
+
+  const userPrompt = `Topic: ${topic}
+Difficulty: ${difficulty || 'Mid'} (Low = Junior, Mid = Intermediate, High = Advanced/Staff Engineer)
+Number of questions: ${count}`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash-lite',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: quizQuestionsSchema,
-      },
-    });
-
-    if (!response.text) {
-      throw new Error("No response received from Gemini API for quiz generation");
-    }
-
-    const data = JSON.parse(response.text);
+    const data = await callGroq(systemPrompt, userPrompt);
     return data.questions || [];
   } catch (error) {
-    console.error("Error in generateQuizQuestions service:", error);
+    console.error('Error in generateQuizQuestions service:', error);
     throw error;
   }
 }

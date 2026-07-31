@@ -1,14 +1,14 @@
 const { Router } = require('express');
 const reportRouter = Router();
 const reportController = require('../controllers/report.controller');
-const { checkUsageLimit, checkGeminiRateLimit } = require('../middlewares/limit.middleware');
+const { checkUsageLimit, checkAiRateLimit } = require('../middlewares/limit.middleware');
 
 /**
  * @route POST /api/reports/generate
  * @description Generate a new interview report
  * @access Private
  */
-reportRouter.post('/generate', checkUsageLimit('resume'), checkGeminiRateLimit, reportController.generateReportController);
+reportRouter.post('/generate', checkUsageLimit('resume'), checkAiRateLimit, reportController.generateReportController);
 
 /**
  * @route GET /api/reports

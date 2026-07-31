@@ -84,9 +84,9 @@ const checkUsageLimit = (actionType) => {
 };
 
 /**
- * Middleware to shield the backend against Gemini Free Tier API rate limits (15 RPM).
+ * Middleware to shield the backend against AI API rate limits (15 RPM safety window).
  */
-const checkGeminiRateLimit = (req, res, next) => {
+const checkAiRateLimit = (req, res, next) => {
   const now = Date.now();
   const oneMinuteAgo = now - 60000;
   const userId = req.user.id;
@@ -100,7 +100,7 @@ const checkGeminiRateLimit = (req, res, next) => {
     const oldestTimestamp = globalRequestTimestamps[0];
     const waitSeconds = Math.ceil((60000 - (now - oldestTimestamp)) / 1000);
     return res.status(429).json({
-      message: `The server's AI service is experiencing high load (Gemini rate limits). Please wait ${waitSeconds} second(s) before trying again.`,
+      message: `The server's AI service is experiencing high load. Please wait ${waitSeconds} second(s) before trying again.`,
       rateLimitExceeded: true
     });
   }
@@ -150,4 +150,4 @@ const incrementUsage = async (userDoc, actionType) => {
   }
 };
 
-module.exports = { checkUsageLimit, checkGeminiRateLimit, incrementUsage };
+module.exports = { checkUsageLimit, checkAiRateLimit, incrementUsage };

@@ -54,6 +54,13 @@ async function generateReportController(req, res) {
     });
   } catch (error) {
     console.error('Error generating report:', error);
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      fs.appendFileSync(path.join(__dirname, '../../error.log'), `\n[${new Date().toISOString()}] CONTROLLER ERROR: ${error.message}\n${error.stack}\n`, 'utf-8');
+    } catch (e) {
+      console.error('Failed to log error inside controller:', e.message);
+    }
     res.status(500).json({
       message: 'An error occurred while generating the interview report.',
       error: error.message,
