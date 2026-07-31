@@ -5,7 +5,9 @@ import {
   register, 
   logout, 
   verifyRegisterOTP, 
-  getMe
+  getMe,
+  forgotPassword,
+  resetPassword
 } from '../services/auth.api';
 
 export const useAuth = () => {
@@ -85,6 +87,30 @@ export const useAuth = () => {
     }
   };
 
+  const handleForgotPassword = async (email) => {
+    try {
+      const data = await forgotPassword(email);
+      if (data?.success) {
+        return { success: true };
+      }
+      return { success: false, error: 'Invalid response from server.' };
+    } catch (err) {
+      return { success: false, error: err?.response?.data?.message || 'Failed to request reset OTP.' };
+    }
+  };
+
+  const handleResetPassword = async ({ email, otp, newPassword }) => {
+    try {
+      const data = await resetPassword(email, otp, newPassword);
+      if (data?.success) {
+        return { success: true };
+      }
+      return { success: false, error: 'Invalid response from server.' };
+    } catch (err) {
+      return { success: false, error: err?.response?.data?.message || 'Failed to update password.' };
+    }
+  };
+
   return { 
     user, 
     loading, 
@@ -92,6 +118,8 @@ export const useAuth = () => {
     handleRegister,
     handleVerifyRegisterOTP,
     handleLogout,
-    refreshUser
+    refreshUser,
+    handleForgotPassword,
+    handleResetPassword
   };
 };
