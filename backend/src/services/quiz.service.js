@@ -1,8 +1,16 @@
 const Groq = require('groq-sdk');
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+let groqClient;
+function getGroqClient() {
+  if (!groqClient) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      throw new Error('The GROQ_API_KEY environment variable is missing.');
+    }
+    groqClient = new Groq({ apiKey });
+  }
+  return groqClient;
+}
 
 const MODEL = 'llama-3.1-8b-instant';
 const FALLBACK_MODEL = 'llama-3.3-70b-versatile';
@@ -12,7 +20,7 @@ const FALLBACK_MODEL = 'llama-3.3-70b-versatile';
  */
 async function callGroq(systemPrompt, userPrompt, modelName = MODEL) {
   try {
-    const response = await groq.chat.completions.create({
+    const response = await getGroqClient().chat.completions.create({
       model: modelName,
       messages: [
         { role: 'system', content: systemPrompt },
