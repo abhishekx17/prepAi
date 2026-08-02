@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { ArrowRight, Eye, EyeOff, Lock, Mail, User, Sparkles, ArrowLeft, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, User, ArrowLeft, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Logo from '../../../components/ui/Logo';
 import { useAuth } from '../hooks/useAuth';
 import LoadingScreen from '../../ai/components/LoadingScreen';
 import { Alert } from '../../../components/ui/Alert';
@@ -70,11 +71,8 @@ const Register = () => {
       
       {/* Left Column: Premium Branding */}
       <section className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-white dark:bg-zinc-900 border-r border-slate-200 dark:border-zinc-800 transition-colors duration-300 relative overflow-hidden">
-        <Link to="/" className="flex items-center gap-2.5 group relative z-10">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 group-hover:border-blue-500 transition-colors duration-300">
-            <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
-          </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">PrepAI</span>
+        <Link to="/" className="relative z-10 group">
+          <Logo size="md" variant="blue" showText={true} textClassName="text-lg font-bold tracking-tight" />
         </Link>
 
         <div className="my-auto relative z-10 max-w-sm space-y-8">
@@ -133,9 +131,7 @@ const Register = () => {
           className="w-full max-w-md bg-white dark:bg-zinc-900 lg:bg-transparent lg:dark:bg-transparent border border-slate-200 dark:border-zinc-800 lg:border-0 rounded-2xl p-8 sm:p-10 lg:p-0 shadow-sm lg:shadow-none transition-colors duration-300"
         >
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left mb-6">
-            <div className="flex lg:hidden h-11 w-11 items-center justify-center rounded-xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 mb-4 transition-colors">
-              <Sparkles className="h-5.5 w-5.5" strokeWidth={2} />
-            </div>
+            <Logo size="lg" variant="blue" showText={false} containerClassName="lg:hidden mb-4" />
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50">
               {otpSent ? 'Verify your email' : 'Create your account'}
             </h2>

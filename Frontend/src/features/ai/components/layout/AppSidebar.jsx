@@ -9,12 +9,12 @@ import {
   ChevronRight,
   LogOut,
   Plus,
-  Sparkles,
   BarChart3,
   Award,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../../../components/ui/Button';
+import Logo from '../../../../components/ui/Logo';
 
 export const NAV_ITEMS = [
   {
@@ -166,7 +166,7 @@ const AppSidebar = ({
           className="flex h-16 items-center gap-3 border-b border-slate-200 dark:border-zinc-800 px-4 shrink-0 overflow-hidden select-none cursor-pointer hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors group/brand"
         >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 group-hover/brand:border-blue-500 transition-colors relative">
-            <Sparkles className="h-4.5 w-4.5" strokeWidth={1.5} />
+            <Logo size="md" iconOnly={true} />
             {isCollapsed && (
               <ChevronRight className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-full text-slate-400 dark:text-zinc-500 opacity-0 group-hover/brand:opacity-100 transition-opacity" />
             )}

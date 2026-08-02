@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
+import Logo from '../components/ui/Logo';
 import {
   Sun,
   Moon,
-  Sparkles,
   ArrowRight,
   FileText,
   MessageSquare,
@@ -202,9 +202,7 @@ const InteractiveDashboardMock = () => {
             {/* Logo brand info */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400">
-                  <Sparkles className="h-3.5 w-3.5" />
-                </div>
+                <Logo size="sm" variant="blue" showText={false} />
                 <div>
                   <span className="font-bold text-slate-900 dark:text-zinc-100 uppercase tracking-tight text-xs block">PrepAI</span>
                   <span className="text-[8px] text-slate-400 block font-medium -mt-0.5">Interview workspace</span>
@@ -728,12 +726,7 @@ const LandingPage = () => {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo brand */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded border-2 border-slate-900 dark:border-zinc-100 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 group-hover:scale-95 transition-transform duration-200">
-              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-            </div>
-            <span className="text-base font-bold font-display tracking-tight text-slate-900 dark:text-zinc-50">
-              PrepAI
-            </span>
+            <Logo size="md" variant="dark" showText={true} />
           </Link>
 
           {/* Desktop Navigation links */}
@@ -1322,12 +1315,7 @@ const LandingPage = () => {
       {/* Footer Section */}
       <footer className="bg-slate-50 dark:bg-zinc-950 border-t border-slate-200 dark:border-zinc-900 py-12 transition-colors duration-300 select-none">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded border border-slate-900 dark:border-zinc-100 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-bold">
-              <Sparkles className="h-3.5 w-3.5" />
-            </div>
-            <span className="text-sm font-bold font-display text-slate-900 dark:text-zinc-50">PREPAI</span>
-          </div>
+          <Logo size="sm" variant="dark" showText={true} textClassName="uppercase text-sm" />
           
           <div className="flex flex-wrap justify-center gap-8 font-mono text-[10px] font-bold tracking-widest uppercase text-slate-500 dark:text-zinc-500">
             <a href="#features" className="hover:text-brand-primary">Features</a>

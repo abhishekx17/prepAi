@@ -1,6 +1,7 @@
 import React from 'react';
-import { FileSearch, MessageSquare, ClipboardCheck, Sparkles } from 'lucide-react';
+import { FileSearch, MessageSquare, ClipboardCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Logo from '../../../components/ui/Logo';
 
 const features = [
   { icon: FileSearch, label: 'Resume analysis' },
@@ -38,7 +39,7 @@ const AuthVisual = ({
 
       {/* Center node */}
       <div className="absolute left-1/2 top-[38%] flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950 shadow-md">
-        <Sparkles className="h-6 w-6 text-zinc-350" strokeWidth={1.5} />
+        <Logo size="lg" iconOnly={true} />
       </div>
 
       {/* Floating feature pills */}
@@ -71,8 +72,8 @@ const AuthVisual = ({
     {/* Content */}
     <div className="relative z-10 flex flex-1 flex-col justify-between">
       <div className="flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-805 bg-zinc-950 text-zinc-200">
-          <Sparkles className="h-4.5 w-4.5" strokeWidth={1.5} />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950 text-zinc-200">
+          <Logo size="sm" iconOnly={true} />
         </div>
         <div>
           <p className="text-xs font-bold tracking-tight text-zinc-50 leading-none">PrepAI</p>

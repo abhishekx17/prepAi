@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { startQuiz, getQuizHistory } from '../services/quiz.api';
+import Logo from '../../../components/ui/Logo';
 import { 
   Bot, 
   Plus, 
@@ -139,14 +140,7 @@ const QuizDashboard = () => {
         <div className="flex flex-col overflow-y-auto flex-1">
           {/* Logo Section */}
           <div className="p-6 border-b border-[#161926] flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-800/50 bg-blue-950/30 text-blue-400">
-                <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-zinc-50">
-                PrepAI
-              </span>
-            </div>
+            <Logo size="md" variant="blue" showText={true} textClassName="text-lg font-bold tracking-tight text-zinc-50" />
           </div>
 
           {/* New Practice Quiz button */}
