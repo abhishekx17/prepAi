@@ -29,15 +29,7 @@ import {
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../features/auth/hooks/useAuth';
 
-// Monochrome company logos for the marquee strip
-const LOGOS = [
-  { name: 'Google', svg: <svg className="h-6 w-auto fill-current" viewBox="0 0 24 24"><path d="M12.24 10.285V13.4h6.887c-.648 2.41-2.519 4.13-5.136 4.13A5.85 5.85 0 018.1 11.7a5.85 5.85 0 015.89-5.83 5.7 5.7 0 014.07 1.7l2.45-2.42A8.91 8.91 0 0013.99 2.5a9.01 9.01 0 00-9 9 9.01 9.01 0 009 9c5.07 0 8.35-3.56 8.35-8.47 0-.58-.05-1.12-.15-1.748H12.24z"/></svg> },
-  { name: 'Meta', svg: <svg className="h-6 w-auto fill-current" viewBox="0 0 24 24"><path d="M22.84 10.74c-.11-.53-.45-1-.95-1.32a6.38 6.38 0 00-3.32-.88 6.43 6.43 0 00-3.35.88c-.62.4-1.1.96-1.38 1.63-.3-.67-.78-1.23-1.4-1.63a6.43 6.43 0 00-3.35-.88 6.38 6.38 0 00-3.32.88c-.5.32-.84.79-.95 1.32-.12.58-.02 1.2.29 1.76a4 4 0 001.35 1.39 6.22 6.22 0 003 1.07V15a4.23 4.23 0 01-1.92-.76c-.46-.35-.78-.83-.87-1.38s.02-1.12.31-1.63c.27-.47.67-.84 1.13-1.07s.98-.34 1.5-.34 1 .11 1.46.34a2.82 2.82 0 011.13 1.07c.29.51.4 1.08.31 1.63s-.41 1-.87 1.38A4.23 4.23 0 0111 15v.06a6.22 6.22 0 003-1.07 4 4 0 001.35-1.39c.31-.56.41-1.18.29-1.76zM1.16 10.74c-.11-.53-.45-1-.95-1.32A6.38 6.38 0 000 8.54a6.43 6.43 0 000 .88c-.12.58-.02 1.2.29 1.76a4 4 0 001.35 1.39 6.22 6.22 0 003 1.07V15A4.23 4.23 0 012.72 14.24c-.46-.35-.78-.83-.87-1.38s.02-1.12.31-1.63c.27-.47.67-.84 1.13-1.07S4.27 10 4.79 10s1 .11 1.46.34a2.82 2.82 0 011.13 1.07c.29.51.4 1.08.31 1.63s-.41 1-.87 1.38A4.23 4.23 0 016.14 15.06a6.22 6.22 0 003-1.07 4 4 0 001.35-1.39c.31-.56.41-1.18.29-1.76z"/></svg> },
-  { name: 'Stripe', svg: <svg className="h-6 w-auto fill-current" viewBox="0 0 24 24"><path d="M13.93 7.84c0-.98.77-1.42 2.05-1.42 1.28 0 2.29.39 2.92.74l.43-2.31c-.65-.33-1.85-.68-3.41-.68-3.32 0-5.32 1.77-5.32 4.75 0 3.2 2.84 3.73 4.14 4.12 1.3.39 1.76.68 1.76 1.28 0 .8-.8 1.29-2.07 1.29-1.63 0-2.8-.57-3.48-.96l-.47 2.37c.78.43 2.18.84 3.93.84 3.4 0 5.48-1.75 5.48-4.7 0-3.31-2.92-3.87-4.14-4.22-1.22-.35-1.82-.67-1.82-1.1zm-8.87-.2c0-.52.42-.91.95-.91.53 0 .95.39.95.91s-.42.91-.95.91c-.53 0-.95-.39-.95-.91zm2.34 2.82v8.52h-2.73v-8.52h2.73zm13.11.19h-2.74v8.52h2.74V10.65z"/></svg> },
-  { name: 'Vercel', svg: <svg className="h-5 w-auto fill-current" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2z"/></svg> },
-  { name: 'Netflix', svg: <svg className="h-5.5 w-auto fill-current" viewBox="0 0 24 24"><path d="M5.61 22.8c-.28 0-.53-.16-.64-.42l-.02-.04C4.1 20.3 3 18.25 2 16.2L2 2h2.75v12.2l1.64 3.4c.05.11.13.18.25.18h.04c.12 0 .2-.07.25-.18l1.64-3.4V2h2.75l.02.04 1.28 2.65L12 2.65V22.8H9.25V10.6l-1.64-3.4a.27.27 0 00-.25-.18h-.04a.27.27 0 00-.25.18l-1.64 3.4V22.8H5.61z"/></svg> },
-  { name: 'Slack', svg: <svg className="h-5.5 w-auto fill-current" viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523 2.528 2.528 0 0 1-2.522-2.523 2.528 2.528 0 0 1 2.522-2.52h2.52v2.52zm1.261 0a2.528 2.528 0 0 1 2.52-2.52h5.043a2.528 2.528 0 0 1 2.522 2.52v5.043a2.528 2.528 0 0 1-2.522 2.52H8.823a2.528 2.528 0 0 1-2.52-2.52v-5.043zm2.52-6.342a2.528 2.528 0 0 1-2.52-2.52 2.528 2.528 0 0 1 2.52-2.522 2.528 2.528 0 0 1 2.523 2.522v2.52h-2.523zm0 1.261a2.528 2.528 0 0 1 2.523 2.52v5.043a2.528 2.528 0 0 1-2.523 2.52H3.782a2.528 2.528 0 0 1-2.52-2.52V12.6a2.528 2.528 0 0 1 2.52-2.52h5.043zm6.342-2.52a2.528 2.528 0 0 1 2.52-2.522 2.528 2.528 0 0 1 2.522 2.522 2.528 2.528 0 0 1-2.522 2.52h-2.52v-2.52zm-1.261 0a2.528 2.528 0 0 1-2.52 2.52H8.823a2.528 2.528 0 0 1-2.52-2.52V3.782a2.528 2.528 0 0 1 2.52-2.52h5.043a2.528 2.528 0 0 1 2.52 2.52v5.043zm-2.52 6.342a2.528 2.528 0 0 1 2.52 2.52 2.528 2.528 0 0 1-2.52 2.522 2.528 2.528 0 0 1-2.523-2.522v-2.52h2.523zm0-1.261a2.528 2.528 0 0 1-2.523-2.52V8.823a2.528 2.528 0 0 1 2.523-2.52h5.043a2.528 2.528 0 0 1 2.52 2.52v5.043a2.528 2.528 0 0 1-2.52 2.52H10.14z"/></svg> },
-];
+
 
 const FAQS = [
   {
@@ -931,35 +923,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Static Monochrome Trusted Logos Bar */}
-      <section className="bg-slate-50 dark:bg-zinc-950 py-8 select-none transition-colors duration-300 border-t border-b border-slate-200/60 dark:border-zinc-900/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
-            Validated by developers entering active engineering roles at
-          </p>
-          {/* Scrolling horizontal marquee for logos, especially on mobile/small screens */}
-          <div 
-            className="mt-6 relative w-full overflow-hidden"
-            style={{
-              maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
-            }}
-          >
-            <div className="flex gap-16 animate-marquee whitespace-nowrap py-2 text-slate-400 dark:text-zinc-500">
-              {/* Repeat logos three times to guarantee infinite seamless wrap on any width screen */}
-              {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors duration-200 shrink-0 inline-flex"
-                >
-                  {logo.svg}
-                  <span className="font-mono text-[10px] font-bold tracking-widest uppercase">{logo.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Dashboard Preview Section */}
       <section id="demo" className="py-16 sm:py-24 bg-white dark:bg-zinc-900 transition-colors duration-300 border-b border-slate-200 dark:border-zinc-900">
