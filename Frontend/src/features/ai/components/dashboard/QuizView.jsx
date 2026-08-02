@@ -30,19 +30,22 @@ const QuizView = ({
       value: 'Low', 
       label: 'Beginner', 
       desc: 'Junior level concepts & basic syntax check', 
-      activeColor: 'border-emerald-500 bg-emerald-950/20 text-emerald-300 shadow-lg shadow-emerald-500/5' 
+      activeColor: 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300 shadow-lg shadow-emerald-500/5',
+      descColor: 'text-emerald-600/90 dark:text-emerald-400/80'
     },
     { 
       value: 'Mid', 
       label: 'Intermediate', 
       desc: 'Practical application & core architectures', 
-      activeColor: 'border-amber-500 bg-amber-950/20 text-amber-300 shadow-lg shadow-amber-500/5' 
+      activeColor: 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300 shadow-lg shadow-amber-500/5',
+      descColor: 'text-amber-600/90 dark:text-amber-400/80'
     },
     { 
       value: 'High', 
       label: 'Advanced', 
       desc: 'System scaling, optimization & design patterns', 
-      activeColor: 'border-rose-500 bg-rose-950/20 text-rose-300 shadow-lg shadow-rose-500/5' 
+      activeColor: 'border-rose-500 bg-rose-50/50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300 shadow-lg shadow-rose-500/5',
+      descColor: 'text-rose-600/90 dark:text-rose-400/80'
     },
   ];
 
@@ -54,7 +57,7 @@ const QuizView = ({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Card className="p-5 sm:p-6 bg-zinc-950/40 border border-zinc-850/80 shadow-2xl backdrop-blur-sm">
+      <Card className="p-5 sm:p-6">
         <CardHeader
           icon={ClipboardCheck}
           title="Skill Quiz"
@@ -82,7 +85,6 @@ const QuizView = ({
               onChange={(e) => setQuizTopic(e.target.value)}
               placeholder="e.g. React Hooks, Database Indexing, JavaScript Closures"
               required
-              className="bg-[#161926] border border-slate-855 py-3 rounded-xl focus:border-slate-500"
             />
             {/* Suggested quick chips */}
             <div className="mt-2.5 flex flex-wrap gap-2 select-none">
@@ -91,7 +93,7 @@ const QuizView = ({
                   key={t}
                   type="button"
                   onClick={() => setQuizTopic(t)}
-                  className="text-[10px] sm:text-xs font-semibold px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer"
+                  className="text-[10px] sm:text-xs font-semibold px-3 py-1 rounded-full border border-slate-200 dark:border-zinc-800 bg-slate-100/50 dark:bg-zinc-900/30 hover:bg-slate-200/80 dark:hover:bg-zinc-900/60 hover:border-slate-350 dark:hover:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 transition-all cursor-pointer"
                 >
                   #{t}
                 </button>
@@ -113,12 +115,14 @@ const QuizView = ({
                     className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between h-24 ${
                       isSelected 
                         ? d.activeColor 
-                        : 'border-zinc-850 bg-zinc-900/10 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200'
+                        : 'border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/10 hover:border-slate-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200'
                     }`}
                   >
                     <div>
                       <h4 className="text-xs font-bold uppercase tracking-wider font-mono">{d.label}</h4>
-                      <p className="text-[10px] text-zinc-500 mt-1 leading-normal">{d.desc}</p>
+                      <p className={`text-[10px] mt-1 leading-normal ${
+                        isSelected ? d.descColor : 'text-slate-500 dark:text-zinc-500'
+                      }`}>{d.desc}</p>
                     </div>
                     {isSelected && (
                       <span className="w-1.5 h-1.5 rounded-full bg-current self-end mt-2"></span>
@@ -143,24 +147,30 @@ const QuizView = ({
                     onClick={() => setQuizNumQuestions(q.value)}
                     className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                       isSelected 
-                        ? 'border-blue-500/50 bg-blue-950/15 text-blue-200 shadow-lg shadow-blue-500/5' 
-                        : 'border-zinc-855 bg-zinc-900/10 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-300 shadow-lg shadow-blue-500/5' 
+                        : 'border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/10 hover:border-slate-300 dark:hover:border-zinc-700 text-slate-700 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                        isSelected ? 'bg-blue-600 text-white' : 'bg-zinc-950 text-zinc-500 border border-zinc-850'
+                        isSelected 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-slate-100 dark:bg-zinc-950 text-slate-500 dark:text-zinc-550 border border-slate-200 dark:border-zinc-850'
                       }`}>
                         <Icon className="w-4 h-4" />
                       </div>
                       <div>
                         <h4 className="text-xs font-bold leading-none">{q.label}</h4>
-                        <span className="text-[9px] font-mono text-zinc-500 mt-1 block">{q.desc}</span>
+                        <span className={`text-[9px] font-mono mt-1 block ${
+                          isSelected ? 'text-blue-600/80 dark:text-blue-400/70' : 'text-slate-500 dark:text-zinc-500'
+                        }`}>{q.desc}</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] font-mono font-bold text-zinc-500 flex items-center gap-1 select-none">
-                        <Timer className="w-3 h-3 text-zinc-400" />
+                      <span className={`text-[10px] font-mono font-bold flex items-center gap-1 select-none ${
+                        isSelected ? 'text-blue-600/90 dark:text-blue-400/80' : 'text-slate-550 dark:text-zinc-500'
+                      }`}>
+                        <Timer className={`w-3.5 h-3.5 ${isSelected ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-zinc-500'}`} />
                         {q.time}
                       </span>
                     </div>
@@ -171,7 +181,7 @@ const QuizView = ({
           </div>
 
           {/* Footer Submit */}
-          <div className="flex flex-col gap-4 border-t border-slate-200 dark:border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
+          <div className="flex flex-col gap-4 border-t border-slate-200 dark:border-zinc-800 pt-5 sm:flex-row sm:items-center sm:justify-between select-none">
             <p className="text-xs text-slate-500 dark:text-zinc-500 font-medium max-w-md">
               Generates customized question items with real-time scoring, comprehensive grading breakdown, and targeted AI study explanations.
             </p>
