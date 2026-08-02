@@ -136,7 +136,7 @@ const QuizResult = () => {
           <div className="sm:col-span-4 flex flex-col items-center justify-center">
             <div className="relative w-32 h-32 flex items-center justify-center">
               {/* Radial Glow */}
-              <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-sky-500/5 to-indigo-500/5 blur-md" />
+              <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-blue-500/5 to-indigo-500/5 blur-md" />
               
               <svg className="w-full h-full transform -rotate-90 relative z-10" viewBox="0 0 120 120">
                 <circle

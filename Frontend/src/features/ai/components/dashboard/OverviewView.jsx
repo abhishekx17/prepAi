@@ -19,7 +19,7 @@ const FEATURE_CARDS = [
     title: 'Resume Analysis',
     description: 'Compare your resume with a target role and get gaps, match score, and next steps.',
     cta: 'Analyze',
-    accent: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800/40',
+    accent: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40',
   },
   {
     id: 'mock',
@@ -83,7 +83,7 @@ const AnimatedCounter = ({ value, duration = 0.8 }) => {
 
 const StatTile = ({ label, value, detail, icon: Icon, tone = 'cyan' }) => {
   const toneClasses = {
-    cyan: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800/40',
+    cyan: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40',
     pink: 'text-fuchsia-600 dark:text-fuchsia-400 bg-fuchsia-50 dark:bg-fuchsia-950/20 border-fuchsia-200 dark:border-fuchsia-800/40',
     green: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40',
     amber: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/40',
@@ -146,7 +146,7 @@ const OverviewView = ({
         <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[1.1fr_0.9fr] lg:p-7">
           <div className="flex min-h-56 flex-col justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-sky-100 dark:border-sky-800/20 bg-sky-50 dark:bg-sky-950/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 dark:border-blue-800/20 bg-blue-50 dark:bg-blue-950/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 <TrendingUp className="h-3.5 w-3.5" strokeWidth={1.7} />
                 Preparation cockpit
               </div>
@@ -161,7 +161,7 @@ const OverviewView = ({
               <button
                 type="button"
                 onClick={() => onSelectFeature('analyze')}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white px-4 text-sm font-bold shadow-sm cursor-pointer"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-4 text-sm font-bold shadow-sm cursor-pointer"
               >
                 Start analysis
                 <ArrowRight className="h-4 w-4" strokeWidth={1.6} />
@@ -187,7 +187,7 @@ const OverviewView = ({
               </div>
               <div className="mt-4 h-2 rounded-full bg-slate-200 dark:bg-white/8">
                 <div
-                  className="h-full rounded-full bg-sky-500"
+                  className="h-full rounded-full bg-blue-500"
                   style={{ width: `${completionPercent}%` }}
                 />
               </div>
@@ -308,7 +308,7 @@ const OverviewView = ({
                       ? new Date(report.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
                       : 'Recent'}
                   </span>
-                  <span className="rounded-full border border-sky-100 dark:border-sky-900/50 bg-sky-50 dark:bg-sky-950/20 px-2.5 py-1 text-[10px] font-black text-sky-600 dark:text-sky-400">
+                  <span className="rounded-full border border-blue-100 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/20 px-2.5 py-1 text-[10px] font-black text-blue-600 dark:text-blue-400">
                     {report.matchScore || 0}% match
                   </span>
                 </div>

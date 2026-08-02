@@ -55,7 +55,7 @@ const highlightJS = (code) => {
     } else if (g4) {
       html += `<span class="text-amber-400 font-semibold">${escapeHtml(match)}</span>`;
     } else if (g5) {
-      html += `<span class="text-sky-400 font-semibold">${escapeHtml(match)}</span>`;
+      html += `<span class="text-blue-400 font-semibold">${escapeHtml(match)}</span>`;
     } else if (g6) {
       html += `<span class="text-orange-400 font-medium">${escapeHtml(match)}</span>`;
     } else {
@@ -231,7 +231,7 @@ const InterviewArena = () => {
   return (
     <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col relative overflow-hidden">
       {/* Background radial soft light-glow decoration */}
-      <div className="absolute inset-0 bg-radial-[circle_at_center,_var(--tw-gradient-stops)] from-sky-950/10 via-transparent to-transparent pointer-events-none z-0"></div>
+      <div className="absolute inset-0 bg-radial-[circle_at_center,_var(--tw-gradient-stops)] from-blue-955/10 via-transparent to-transparent pointer-events-none z-0"></div>
 
       {/* Top Header Status Bar */}
       <header className="px-6 py-3 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 flex items-center justify-between z-10 shrink-0 select-none relative">
@@ -262,7 +262,7 @@ const InterviewArena = () => {
           </span>
           <div className="w-24 bg-zinc-900 h-1.5 rounded-full hidden sm:block overflow-hidden border border-zinc-850 select-none">
             <div 
-              className="bg-gradient-to-r from-sky-500 to-indigo-500 h-full rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500"
               style={{ width: `${((currentQuestionIndex) / totalQuestions) * 100}%` }}
             ></div>
           </div>
@@ -277,7 +277,7 @@ const InterviewArena = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-100 flex items-center justify-center relative select-none">
-                <Bot className="w-5 h-5 text-sky-400" strokeWidth={1.5} />
+                <Bot className="w-5 h-5 text-blue-400" strokeWidth={1.5} />
                 <div className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-zinc-950"></span>
@@ -286,12 +286,12 @@ const InterviewArena = () => {
               <div className="select-none">
                 <h4 className="text-xs font-bold text-zinc-200 font-mono uppercase tracking-wider flex items-center gap-1.5">
                   AI Interviewer
-                  <span className="rounded-full bg-sky-950/40 border border-sky-800/40 px-1.5 py-0.5 text-[8px] font-black text-sky-400">Online</span>
+                  <span className="rounded-full bg-blue-950/40 border border-blue-800/40 px-1.5 py-0.5 text-[8px] font-black text-blue-400">Online</span>
                 </h4>
                 <div className="flex items-center gap-1 h-3 mt-1.5">
-                  <span className="w-0.5 bg-sky-505 rounded-full h-1.5 animate-[bounce_1s_infinite_100ms]"></span>
+                  <span className="w-0.5 bg-blue-500 rounded-full h-1.5 animate-[bounce_1s_infinite_100ms]"></span>
                   <span className="w-0.5 bg-indigo-505 rounded-full h-2.5 animate-[bounce_1s_infinite_300ms]"></span>
-                  <span className="w-0.5 bg-sky-405 rounded-full h-2 animate-[bounce_1s_infinite_200ms]"></span>
+                  <span className="w-0.5 bg-blue-400 rounded-full h-2 animate-[bounce_1s_infinite_200ms]"></span>
                 </div>
               </div>
             </div>
@@ -299,11 +299,11 @@ const InterviewArena = () => {
             {/* Question Card Prompt */}
             <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 shadow-xl backdrop-blur-sm group select-text">
               {/* Highlight Top border */}
-              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0"></div>
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-blue-500/0 via-blue-500/40 to-blue-500/0"></div>
               
               <div className="flex items-center gap-1.5 select-none mb-4">
-                <Info className="w-3.5 h-3.5 text-sky-400" strokeWidth={2} />
-                <span className="text-[9px] font-mono font-black uppercase text-sky-400 tracking-wider">Question Prompt</span>
+                <Info className="w-3.5 h-3.5 text-blue-400" strokeWidth={2} />
+                <span className="text-[9px] font-mono font-black uppercase text-blue-400 tracking-wider">Question Prompt</span>
               </div>
               
               <p className="text-zinc-100 text-sm sm:text-base leading-relaxed font-semibold">
@@ -335,7 +335,7 @@ const InterviewArena = () => {
                     className="flex items-center gap-2 text-[10px] font-mono font-black text-zinc-400 hover:text-zinc-100 hover:border-zinc-700 transition-all py-2.5 px-4 rounded-xl border border-zinc-800 bg-zinc-900/20 hover:bg-zinc-900/60 disabled:opacity-50 cursor-pointer shadow-sm select-none"
                   >
                     {requestingHint ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-sky-400" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
                     ) : (
                       <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
                     )}
@@ -430,7 +430,7 @@ const InterviewArena = () => {
 
                 {/* Complexity/Explanation notes */}
                 <div className="shrink-0 h-28 flex flex-col bg-zinc-900/10 border border-zinc-850 rounded-2xl p-4 focus-within:border-zinc-700 relative overflow-hidden backdrop-blur-sm shadow-md">
-                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-sky-500/0 via-zinc-800 to-sky-500/0"></div>
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-blue-500/0 via-zinc-800 to-blue-500/0"></div>
                   <label htmlFor="codeExplanation" className="block text-[9px] font-bold text-zinc-500 mb-1.5 font-mono uppercase tracking-wider select-none">
                     Complexity & Strategy Notes
                   </label>
@@ -447,7 +447,7 @@ const InterviewArena = () => {
               /* Conceptual / Behavioral Large Text Area */
               <div className="flex-1 overflow-y-auto p-6 flex flex-col select-text">
                 <div className="flex-1 flex flex-col bg-zinc-900/10 border border-zinc-800 rounded-2xl p-6 focus-within:border-zinc-700 relative overflow-hidden backdrop-blur-sm shadow-xl">
-                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-sky-500/0 via-zinc-800 to-sky-500/0"></div>
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-blue-500/0 via-zinc-800 to-blue-500/0"></div>
                   <label htmlFor="textAnswer" className="block text-[9px] font-bold text-zinc-500 mb-3.5 font-mono uppercase tracking-wider flex items-center gap-1.5 select-none">
                     <Terminal className="w-3.5 h-3.5 text-zinc-500" />
                     Your Response

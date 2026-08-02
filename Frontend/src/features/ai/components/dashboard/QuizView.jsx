@@ -143,13 +143,13 @@ const QuizView = ({
                     onClick={() => setQuizNumQuestions(q.value)}
                     className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                       isSelected 
-                        ? 'border-sky-500/50 bg-sky-950/15 text-sky-200 shadow-lg shadow-sky-500/5' 
-                        : 'border-zinc-850 bg-zinc-900/10 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200'
+                        ? 'border-blue-500/50 bg-blue-950/15 text-blue-200 shadow-lg shadow-blue-500/5' 
+                        : 'border-zinc-855 bg-zinc-900/10 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                        isSelected ? 'bg-sky-500 text-white' : 'bg-zinc-950 text-zinc-500 border border-zinc-850'
+                        isSelected ? 'bg-blue-600 text-white' : 'bg-zinc-950 text-zinc-500 border border-zinc-850'
                       }`}>
                         <Icon className="w-4 h-4" />
                       </div>
@@ -178,7 +178,7 @@ const QuizView = ({
             <Button 
               type="submit" 
               size="lg" 
-              className="w-full sm:w-auto bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold h-11 px-6 rounded-xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-indigo-500/10 border-0"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold h-11 px-6 rounded-xl hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-blue-500/15 border-0"
             >
               <Play className="h-4 w-4 shrink-0 text-white" strokeWidth={2.5} />
               Launch quiz

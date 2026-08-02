@@ -32,7 +32,7 @@ export const CardHeader = ({ icon: Icon, title, description, action }) => (
   <div className="flex flex-col gap-4 border-b border-slate-200 dark:border-zinc-800/80 pb-5 sm:flex-row sm:items-start sm:justify-between select-none">
     <div className="flex items-start gap-4">
       {Icon && (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/70 text-sky-600 dark:text-sky-400 shadow-sm">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/70 text-blue-600 dark:text-blue-400 shadow-sm">
           <Icon className="h-4.5 w-4.5" strokeWidth={1.5} />
         </div>
       )}

@@ -95,7 +95,7 @@ const Login = () => {
       {/* Left Column: Premium Branding */}
       <section className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-white dark:bg-zinc-900 border-r border-slate-200 dark:border-zinc-800 transition-colors duration-300 relative overflow-hidden">
         <Link to="/" className="flex items-center gap-2.5 group relative z-10">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-200 dark:border-sky-800/50 bg-sky-50 dark:bg-sky-955 text-sky-600 dark:text-sky-400 group-hover:border-sky-500 transition-colors duration-300">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-200 dark:border-blue-800/50 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 group-hover:border-blue-500 transition-colors duration-300">
             <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
           </div>
           <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-zinc-50">PrepAI</span>
@@ -119,7 +119,7 @@ const Login = () => {
               "Detailed speech and code analysis"
             ].map((text, idx) => (
               <div key={idx} className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-sky-600 dark:text-sky-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
                 <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300">{text}</span>
               </div>
             ))}
@@ -128,11 +128,11 @@ const Login = () => {
 
         <div className="border-t border-slate-100 dark:border-zinc-800/60 pt-6 flex gap-8 relative z-10">
           <div>
-            <p className="text-sm font-black text-sky-600 dark:text-sky-400">88%</p>
+            <p className="text-sm font-black text-blue-600 dark:text-blue-400">88%</p>
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Pass rate increase</p>
           </div>
           <div>
-            <p className="text-sm font-black text-sky-600 dark:text-sky-400">12k+</p>
+            <p className="text-sm font-black text-blue-600 dark:text-blue-400">12k+</p>
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Reports generated</p>
           </div>
         </div>
@@ -143,7 +143,7 @@ const Login = () => {
         <div className="absolute top-6 right-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Home</span>
@@ -158,7 +158,7 @@ const Login = () => {
         >
           {/* Header Title toggler */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left mb-6">
-            <div className="flex lg:hidden h-11 w-11 items-center justify-center rounded-xl border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-955 text-sky-600 dark:text-sky-400 mb-4 transition-colors">
+            <div className="flex lg:hidden h-11 w-11 items-center justify-center rounded-xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 mb-4 transition-colors">
               <Sparkles className="h-5.5 w-5.5" strokeWidth={2} />
             </div>
             
@@ -208,7 +208,7 @@ const Login = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@company.com"
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/50 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-sky-500 dark:focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/10 transition-all font-semibold"
+                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/50 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all font-semibold"
                         required
                       />
                     </div>
@@ -226,7 +226,7 @@ const Login = () => {
                           setError('');
                           setSuccessMessage('');
                         }}
-                        className="text-xs font-semibold text-slate-500 hover:text-sky-600 dark:text-zinc-500 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                        className="text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-zinc-500 dark:hover:text-blue-400 transition-colors cursor-pointer"
                       >
                         Forgot password?
                       </button>
@@ -239,7 +239,7 @@ const Login = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
-                        className="w-full h-11 pl-10 pr-11 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/50 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-sky-500 dark:focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/10 transition-all font-semibold"
+                        className="w-full h-11 pl-10 pr-11 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/50 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all font-semibold"
                         required
                       />
                       <button
@@ -260,7 +260,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={authLoading}
-                    className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold transition-all shadow-sm hover:shadow-sky-500/15 cursor-pointer disabled:opacity-50"
+                    className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-all shadow-sm hover:shadow-blue-500/15 cursor-pointer disabled:opacity-50"
                   >
                     <span>{authLoading ? 'Checking...' : 'Login'}</span>
                     <ArrowRight className="h-4 w-4" />
@@ -291,7 +291,7 @@ const Login = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@company.com"
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-sky-500 dark:focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/10 transition-all font-semibold"
+                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all font-semibold"
                         required
                       />
                     </div>
@@ -300,7 +300,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={authLoading}
-                    className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold transition-all shadow-sm hover:shadow-sky-500/15 cursor-pointer disabled:opacity-50"
+                    className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-all shadow-sm hover:shadow-blue-500/15 cursor-pointer disabled:opacity-50"
                   >
                     <span>{authLoading ? 'Requesting...' : 'Request Reset OTP'}</span>
                     <ArrowRight className="h-4 w-4" />
@@ -348,7 +348,7 @@ const Login = () => {
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
                         placeholder="Enter 6-digit OTP code"
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-650 focus:bg-white dark:focus:bg-zinc-950 focus:border-sky-500 dark:focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/10 transition-all font-mono tracking-wider font-semibold"
+                        className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-650 focus:bg-white dark:focus:bg-zinc-950 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all font-mono tracking-wider font-semibold"
                         required
                       />
                     </div>
@@ -366,7 +366,7 @@ const Login = () => {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="Choose a new secure password"
-                        className="w-full h-11 pl-10 pr-11 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-sky-500 dark:focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/10 transition-all font-semibold"
+                        className="w-full h-11 pl-10 pr-11 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-950 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all font-semibold"
                         required
                       />
                       <button
@@ -387,7 +387,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={authLoading}
-                    className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold transition-all shadow-sm hover:shadow-sky-500/15 cursor-pointer disabled:opacity-50"
+                    className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-all shadow-sm hover:shadow-blue-500/15 cursor-pointer disabled:opacity-50"
                   >
                     <span>{authLoading ? 'Updating...' : 'Update Password'}</span>
                     <ArrowRight className="h-4 w-4" />
@@ -413,7 +413,7 @@ const Login = () => {
           {/* Footer Link */}
           <p className="mt-8 border-t border-slate-100 dark:border-zinc-800/60 pt-6 text-center lg:text-left text-xs text-slate-500 dark:text-zinc-400">
             No account yet?{' '}
-            <Link to="/register" className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300 transition-colors">
+            <Link to="/register" className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors">
               Create one
             </Link>
           </p>

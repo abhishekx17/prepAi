@@ -179,7 +179,7 @@ const QuizArena = () => {
       {/* Linear progress bar */}
       <div className="w-full h-0.5 bg-zinc-900 relative shrink-0">
         <div 
-          className="absolute h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-300"
+          className="absolute h-full bg-gradient-to-r from-blue-600 to-indigo-500 transition-all duration-300"
           style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
         />
       </div>
@@ -204,8 +204,8 @@ const QuizArena = () => {
             </div>
             
             <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
-              <span className="text-[9px] font-mono text-sky-400 uppercase tracking-widest font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+              <span className="text-[9px] font-mono text-blue-400 uppercase tracking-widest font-bold">
                 ACTIVE
               </span>
             </div>
@@ -240,13 +240,13 @@ const QuizArena = () => {
                     onClick={() => handleSelectOption(optIdx)}
                     className={`w-full flex items-center gap-4 p-4.5 rounded-xl border text-left transition-all cursor-pointer group select-none ${
                       isSelected 
-                        ? 'border-sky-500/50 bg-sky-950/15 text-sky-200 font-semibold shadow-lg shadow-sky-500/5 hover:border-sky-400' 
+                        ? 'border-blue-500/50 bg-blue-950/15 text-blue-200 font-semibold shadow-lg shadow-blue-500/5 hover:border-blue-400' 
                         : 'border-zinc-855 bg-zinc-900/10 hover:border-zinc-700 text-zinc-300 hover:text-zinc-50 hover:bg-zinc-900/20 hover:scale-[1.005]'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs transition-all shrink-0 ${
                       isSelected 
-                        ? 'bg-sky-500 text-white border border-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.3)]' 
+                        ? 'bg-blue-600 text-white border border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]' 
                         : 'bg-zinc-950 group-hover:bg-zinc-900 text-zinc-500 group-hover:text-zinc-300 border border-zinc-850'
                     }`}>
                       {label}

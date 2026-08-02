@@ -56,7 +56,7 @@ const ResumeUpload = ({
       </motion.div>
     ) : (
       <motion.button
-        whileHover={{ scale: 1.002, borderColor: '#0284c7' }}
+        whileHover={{ scale: 1.002, borderColor: '#3b82f6' }}
         whileTap={{ scale: 0.998 }}
         type="button"
         onDragOver={onDragOver}
@@ -65,11 +65,11 @@ const ResumeUpload = ({
         onClick={() => document.getElementById('resumeUpload').click()}
         className={`flex h-16 w-full items-center justify-center gap-2 rounded-xl border border-dashed text-center cursor-pointer transition-colors ${
           isDragOver
-            ? 'border-sky-500 bg-sky-50 dark:border-sky-800/50 dark:bg-sky-950/20'
+            ? 'border-blue-500 bg-blue-50 dark:border-blue-800/50 dark:bg-blue-950/20'
             : 'border-slate-200 dark:border-white/12 bg-white dark:bg-zinc-950/20 hover:border-slate-350 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
         }`}
       >
-        <Upload className="h-4 w-4 text-sky-600 dark:text-sky-400" strokeWidth={1.5} />
+        <Upload className="h-4 w-4 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
         <span className="text-xs font-bold text-slate-600 dark:text-zinc-300">Drop resume or browse (PDF/TXT)</span>
       </motion.button>
     )}

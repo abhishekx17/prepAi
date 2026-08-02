@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const variants = {
   primary: 
-    'border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:border-sky-300 dark:border-sky-500/20 dark:bg-sky-950/30 dark:text-sky-400 dark:hover:bg-sky-950/50 dark:hover:text-sky-300 shadow-sm',
+    'border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 dark:border-blue-500/20 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:hover:text-blue-300 shadow-sm',
   secondary: 
     'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900 dark:border-white/10 dark:bg-white/[0.055] dark:text-zinc-300 dark:hover:bg-white/[0.09] dark:hover:border-white/20 dark:hover:text-zinc-50 shadow-sm',
   ghost: 

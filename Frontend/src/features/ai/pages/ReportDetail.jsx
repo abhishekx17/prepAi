@@ -128,7 +128,7 @@ const ReportDetail = () => {
       case 'medium':
         return 'text-amber-400 bg-amber-950/20 border-amber-900/30';
       default:
-        return 'text-sky-400 bg-sky-950/20 border-sky-900/30';
+        return 'text-blue-400 bg-blue-950/20 border-blue-900/30';
     }
   };
 

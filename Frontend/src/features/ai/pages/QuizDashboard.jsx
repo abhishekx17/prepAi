@@ -140,7 +140,7 @@ const QuizDashboard = () => {
           {/* Logo Section */}
           <div className="p-6 border-b border-[#161926] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-800/50 bg-sky-950/30 text-sky-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-blue-800/50 bg-blue-950/30 text-blue-400">
                 <Sparkles className="h-4.5 w-4.5" strokeWidth={2} />
               </div>
               <span className="text-lg font-bold tracking-tight text-zinc-50">
@@ -419,7 +419,7 @@ const QuizDashboard = () => {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 active:scale-[0.99] border-0"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-blue-500/15 active:scale-[0.99] border-0"
                       >
                         <Play className="w-3.5 h-3.5 fill-current text-white stroke-[3]" />
                         <span>Launch Quiz Arena</span>
@@ -443,7 +443,7 @@ const QuizDashboard = () => {
                       {/* Average score gauge */}
                       <div className="relative w-32 h-32 mx-auto flex items-center justify-center">
                         {/* Radial Glow */}
-                        <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-sky-500/5 to-indigo-500/5 blur-md" />
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-blue-500/5 to-indigo-500/5 blur-md" />
                         
                         <svg className="w-full h-full transform -rotate-90 relative z-10" viewBox="0 0 120 120">
                           <circle

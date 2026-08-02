@@ -193,7 +193,7 @@ const InterviewResult = () => {
                 {active && (
                   <motion.div
                     layoutId="active-tab-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-100"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}

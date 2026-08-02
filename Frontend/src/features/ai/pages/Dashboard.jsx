@@ -470,7 +470,7 @@ const Dashboard = () => {
             <Menu className="h-5 w-5" strokeWidth={1.5} />
           </button>
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               {activeFeature === 'overview' ? 'Dashboard' : 'Workspace'}
             </p>
             <h1 className="mt-0.5 truncate text-base font-bold tracking-tight text-slate-900 dark:text-zinc-50">
@@ -482,7 +482,7 @@ const Dashboard = () => {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors duration-200 cursor-pointer"
+              className="p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
               title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
             >
               {theme === 'light' ? (

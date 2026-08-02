@@ -26,11 +26,11 @@ const HistoryItem = ({ icon: Icon, title, meta, badge, onClick }) => (
     onClick={onClick}
     className="group flex w-full items-center gap-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.035] p-4 text-left hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/[0.06] transition-all cursor-pointer shadow-sm dark:shadow-none"
   >
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400">
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400">
       <Icon className="h-4 w-4 transition-colors" strokeWidth={1.5} />
     </div>
     <div className="min-w-0 flex-1">
-      <p className="truncate text-xs font-bold text-slate-800 dark:text-zinc-200 group-hover:text-sky-600 dark:group-hover:text-zinc-50 transition-colors">{title}</p>
+      <p className="truncate text-xs font-bold text-slate-800 dark:text-zinc-200 group-hover:text-blue-600 dark:group-hover:text-zinc-50 transition-colors">{title}</p>
       <p className="mt-1 text-[10px] font-medium text-slate-400 dark:text-zinc-500">{meta}</p>
     </div>
     {badge && (
