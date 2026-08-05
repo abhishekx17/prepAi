@@ -876,20 +876,33 @@ const LandingPage = () => {
               className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight mb-8 uppercase select-none"
             >
               Prepare for your next <br/>
-              <div className="relative -rotate-2 my-3 inline-flex items-center justify-center rounded bg-blue-600 dark:bg-blue-700 px-5 py-1.5 text-white min-w-[240px] sm:min-w-[400px] h-11 sm:h-16 overflow-hidden shadow-[0_4px_20px_rgba(0,78,252,0.25)] select-none">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={keywordIndex}
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -30, opacity: 0 }}
-                    transition={{ duration: 0.35 }}
-                    className="absolute text-center font-display font-black uppercase text-lg sm:text-3xl tracking-wider text-white"
-                  >
-                    {KEYWORDS[keywordIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </div>
+              <motion.div
+                initial={{ clipPath: 'inset(0 100% 0 0)' }}
+                animate={{ clipPath: 'inset(0 0% 0 0)' }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                className="relative -rotate-2 my-4 inline-flex items-center justify-center rounded-xl bg-blue-600 dark:bg-blue-700 px-6 py-2 sm:px-10 sm:py-3 text-white overflow-hidden shadow-[0_8px_30px_rgba(37,99,235,0.3)] border border-blue-500/20 select-none"
+              >
+                {/* Hidden text to size the container dynamically and avoid cut-offs */}
+                <span className="invisible text-xl sm:text-4xl font-extrabold uppercase tracking-wider whitespace-nowrap px-2">
+                  {KEYWORDS[keywordIndex]}
+                </span>
+                
+                {/* Animated absolute text */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={keywordIndex}
+                      initial={{ y: 25, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -25, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      className="text-center font-display font-extrabold uppercase text-xl sm:text-4xl tracking-wider text-white whitespace-nowrap"
+                    >
+                      {KEYWORDS[keywordIndex]}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+              </motion.div>
             </motion.h1>
 
             {/* Benefit-Driven Subtext */}

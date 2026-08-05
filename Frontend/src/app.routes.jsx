@@ -9,75 +9,81 @@ import InterviewResult from './features/ai/pages/InterviewResult';
 import QuizArena from './features/ai/pages/QuizArena';
 import QuizResult from './features/ai/pages/QuizResult';
 import LandingPage from './pages/LandingPage';
+import ErrorPage from './pages/ErrorPage';
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
-  {
     path: '/',
-    element: <LandingPage />,
-  },
-  {
-    path: '/dashboard',
-    element: (
-      <Protected>
-        <Dashboard />
-      </Protected>
-    ),
-  },
-  {
-    path: '/report/:id',
-    element: (
-      <Protected>
-        <ReportDetail />
-      </Protected>
-    ),
-  },
-  {
-    path: '/interview/:id',
-    element: (
-      <Protected>
-        <InterviewArena />
-      </Protected>
-    ),
-  },
-  {
-    path: '/interview/:id/result',
-    element: (
-      <Protected>
-        <InterviewResult />
-      </Protected>
-    ),
-  },
-  {
-    path: '/quiz',
-    element: (
-      <Protected>
-        <Dashboard />
-      </Protected>
-    ),
-  },
-
-  {
-    path: '/quiz/:id',
-    element: (
-      <Protected>
-        <QuizArena />
-      </Protected>
-    ),
-  },
-  {
-    path: '/quiz/:id/result',
-    element: (
-      <Protected>
-        <QuizResult />
-      </Protected>
-    ),
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '',
+        element: <LandingPage />,
+      },
+      {
+        path: 'login',
+        element: <Login />,
+      },
+      {
+        path: 'register',
+        element: <Register />,
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <Protected>
+            <Dashboard />
+          </Protected>
+        ),
+      },
+      {
+        path: 'report/:id',
+        element: (
+          <Protected>
+            <ReportDetail />
+          </Protected>
+        ),
+      },
+      {
+        path: 'interview/:id',
+        element: (
+          <Protected>
+            <InterviewArena />
+          </Protected>
+        ),
+      },
+      {
+        path: 'interview/:id/result',
+        element: (
+          <Protected>
+            <InterviewResult />
+          </Protected>
+        ),
+      },
+      {
+        path: 'quiz',
+        element: (
+          <Protected>
+            <Dashboard />
+          </Protected>
+        ),
+      },
+      {
+        path: 'quiz/:id',
+        element: (
+          <Protected>
+            <QuizArena />
+          </Protected>
+        ),
+      },
+      {
+        path: 'quiz/:id/result',
+        element: (
+          <Protected>
+            <QuizResult />
+          </Protected>
+        ),
+      },
+    ],
   },
 ]);
